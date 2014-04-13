@@ -5,9 +5,12 @@ var Phaser = require('Phaser')
 
 module.exports = Game;
 
+var TypeGame = function(width, height) {
+  this.map = this.game.add.tilemap('map');
+};
+
 Game.prototype = {
   create: function() {
-    // Load everything needed for the preloader state.
   },
 
   update: function() {
