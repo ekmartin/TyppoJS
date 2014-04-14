@@ -4,6 +4,7 @@ var game;
 
 var Game = function() {
   game = this;
+
   this.tileSize = {
     x: 32,
     y: 32
@@ -12,8 +13,48 @@ var Game = function() {
 
 module.exports = Game;
 
-var TypeGame = function(width, height, positionX, positionY) {
-  console.log('ja?', (positionX + width*game.tileSize.x));
+var Cell = function(letter, color, x, y) {
+  this.letter = letter;
+  this.color = color;
+  this.x = x;
+  this.y = y;
+
+  try {
+    // not sure if this raises an error if the color is missing
+    this.sprite = game.add.sprite(this.x, this.y, this.color + 'Cell');
+  }
+  catch(e) {
+    throw 'Sprite missing, color: ' + this.color;
+  }
+};
+
+Cell.prototype.fade = function() {
+  // Error handling maybe? See cell constructor
+  this.sprite.loadTexture(this.color + 'Faded');
+};
+
+Cell.prototype.unFade = function() {
+  this.sprite.loadTexture(this.color + 'Cell');
+}
+
+var Block = function(word) {
+  this.wordString = word.wordString;
+  this.color = word.color;
+  this.locked = false;
+  this.x = word.x;
+  this.y = 0;
+
+  this.cellGroup = game.add.group();
+  this.cells = [];
+  for (var i = 0, wordLength = this.wordString.length; i < wordLength; i++) {
+    var cell = new Cell(this.wordString[i], this.color, this.x+i*game.tileSize.x, this.y);
+    this.cellGroup.add(cell.sprite);
+    this.cells.push(cell);
+  }
+
+};
+
+var TypeGame = function (width, height, positionX, positionY) {
   if (positionX + width*game.tileSize.x < game.game.width && positionY + height*game.tileSize.y < game.game.height) {
     this.width = width;
     this.height = height;
@@ -23,7 +64,6 @@ var TypeGame = function(width, height, positionX, positionY) {
     this.y = positionY;
     this.walls  = game.add.group();
     for (var x = 0; x < this.width; x += 1) {
-      console.log("x: ", x);
       for (var y = 0; y < this.height; y += 1) {
         var cell;
         if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
@@ -41,6 +81,7 @@ var TypeGame = function(width, height, positionX, positionY) {
     throw 'TypeGame goes outside the game width.';
   }
 };
+
 
 TypeGame.prototype.getEndX = function() {
   return this.x + this.realWidth;
