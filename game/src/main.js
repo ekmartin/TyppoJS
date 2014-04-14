@@ -1,7 +1,6 @@
 'use strict';
 
-var Phaser = require('Phaser')
-  , game   = new Phaser.game(800, 600, Phaser.AUTO, 'game-container');
+var game = new Phaser.Game(1200, 800, Phaser.AUTO, 'game-container');
 
 game.state.add('Boot', require('./states/boot'));
 game.state.add('Preloader', require('./states/preloader'));

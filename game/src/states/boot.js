@@ -1,7 +1,6 @@
 'use strict';
 
-var Phaser = require('Phaser')
-  , Boot   = function() {};
+var Boot = function() {};
 
 module.exports = Boot;
 
