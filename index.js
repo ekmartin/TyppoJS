@@ -9,7 +9,7 @@ var express     = require('express')
 app.disable('x-powered-by');
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'jade');
-app.set('views', __dirname + '/app/views');
+app.set('views', __dirname + '/game/views');
 
 app.use(stylus.middleware({
   src: __dirname + '/assets',

@@ -17,6 +17,7 @@
     "lodash": "~2.4.1"
   },
   "devDependencies": {
-    "supervisor": "~0.6.0"
+    "supervisor": "~0.6.0",
+    "browserify-middleware": "~2.5.0",
   }
 }
