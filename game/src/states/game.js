@@ -26,7 +26,18 @@ Game.prototype = {
   },
 
   update: function() {
-    this.player1.dropBlocks();
+    this.player1.tick();
   },
+
+  render: function() {
+    if (this.player1.aliveBlocks.length > 0) {
+      this.player1.walls.forEach(function(wall) {
+        this.game.debug.body(wall);
+      }, this);
+      //this.game.debug.bodyInfo(this.player1.aliveBlocks[0].cellGroup.getAt(0), 20, 20);
+      //this.game.debug.bodyInfo(this.player1.aliveBlocks[1].cellGroup.getAt(0), 20, 400);
+      this.game.debug.body(this.player1.aliveBlocks[0].cellGroup.getAt(0));
+    }
+  }
 };
 

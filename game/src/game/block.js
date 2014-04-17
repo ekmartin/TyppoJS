@@ -9,8 +9,7 @@ var Block = function(word) {
   this.locked = false;
   this.x = word.x;
   this.y = 0;
-
-  this.cellGroup = game.add.group();
+  this.cellGroup = game.add.group(game.world, 'cellGroup', false, true, Phaser.Physics.arcade);
   this.cells = [];
 
   /*this.wordString.forEach(function(c, i) {
@@ -25,7 +24,6 @@ var Block = function(word) {
     this.cellGroup.add(cell.sprite);
     this.cells.push(cell);
   }
-
 };
 
 module.exports = Block;
@@ -40,4 +38,10 @@ Block.prototype.drop = function() {
   this.cells.forEach(function(cell) {
     cell.drop();
   }, this);
-}
+};
+
+Block.prototype.lock = function() {
+  this.cells.forEach(function(cell) {
+    cell.lock();
+  });
+};
