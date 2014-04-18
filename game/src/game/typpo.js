@@ -135,6 +135,7 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
   }
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
+  block.lock();
 };
 
 Typpo.prototype.tick = function() {

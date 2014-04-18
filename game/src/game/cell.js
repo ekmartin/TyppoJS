@@ -8,7 +8,7 @@ var Cell = function(letter, color, x, y) {
   this.x = x;
   this.y = y;
 
-  this.alive = true;
+  this.locked = false;
 
   try {
     // not sure if this raises an error if the color is missing
@@ -19,6 +19,8 @@ var Cell = function(letter, color, x, y) {
   catch (e) {
     throw e + ' - Sprite missing, color: ' + this.color;
   }
+  this.text = game.add.text(this.x+(this.sprite.width/2), this.y+(this.sprite.height/2)+5, this.letter, game.blockFontStyle);
+  this.text.anchor.set(0.5, 0.5);
 };
 
 module.exports = Cell;
@@ -39,12 +41,11 @@ Cell.prototype.destroy = function() {
 Cell.prototype.drop = function() {
   this.y += game.tileSize.y;
   this.sprite.body.y = this.y;
+  this.text.y += game.tileSize.y;
   //this.sprite.body.velocity.y = 50;
 };
 
 Cell.prototype.lock = function() {
-  this.alive = false;
-  if (this.sprite.crashed !== true) {
-
-  }
+  this.locked = true;
+  this.text.destroy();
 };
