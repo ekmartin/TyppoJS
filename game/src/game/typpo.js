@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var Block = require('./block')
@@ -74,7 +75,6 @@ Typpo.prototype.dropBlocks = function() {
 
 Typpo.prototype.addBlock = function(word) {
   if (word.wordString !== undefined) {
-    console.log(this.x, this.width);
     word.x = game.rnd.integerInRange(this.x+1, this.width-5);
     var block = new Block(word);
     this.blocks.push(block);
@@ -147,3 +147,4 @@ Typpo.prototype.tick = function() {
 };
 
 module.exports = Typpo;
+}());

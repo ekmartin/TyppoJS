@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var game = require('../states/game').game;
@@ -49,3 +50,4 @@ Cell.prototype.lock = function() {
   this.locked = true;
   this.text.destroy();
 };
+}());

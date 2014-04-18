@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var game;
@@ -47,4 +48,5 @@ Game.prototype = {
     */
   }
 };
+})();
 

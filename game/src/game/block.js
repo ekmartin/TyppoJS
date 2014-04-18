@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var Cell  = require('./cell')
@@ -45,3 +46,4 @@ Block.prototype.lock = function() {
     cell.lock();
   });
 };
+}());
