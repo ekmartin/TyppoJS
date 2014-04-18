@@ -20,7 +20,7 @@ var Block = function(word) {
   });*/
 
   for (var i = 0, wordLength = this.wordString.length; i < wordLength; i++) {
-    var cell = new Cell(this.wordString[i], this.color, this.x+i*game.tileSize.x, this.y);
+    var cell = new Cell(this.wordString[i], this.color, (this.x+i)*game.tileSize.x, this.y*game.tileSize.y);
     this.cellGroup.add(cell.sprite);
     this.cells.push(cell);
   }

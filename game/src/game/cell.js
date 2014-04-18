@@ -37,7 +37,6 @@ Cell.prototype.destroy = function() {
 };
 
 Cell.prototype.drop = function() {
-  // TODO: Add checks (lock etc)
   this.y += game.tileSize.y;
   this.sprite.body.y = this.y;
   //this.sprite.body.velocity.y = 50;
@@ -45,4 +44,7 @@ Cell.prototype.drop = function() {
 
 Cell.prototype.lock = function() {
   this.alive = false;
+  if (this.sprite.crashed !== true) {
+
+  }
 };

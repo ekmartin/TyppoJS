@@ -17,11 +17,13 @@ var Typpo = function (width, height, positionX, positionY) {
 
     this.walls  = game.add.group(game.world, 'walls', false, true, Phaser.Physics.arcade);
     this.background = game.add.group();
+    this.blockGroup = game.add.group();
 
     this.dropTreshold = 4;
     this.dropCounter = this.dropTreshold;
     this.dropRate = 1000;
 
+    this.blocks = [];
     this.aliveBlocks = [];
     this.deadBlocks = [];
 
@@ -72,7 +74,12 @@ Typpo.prototype.dropBlocks = function() {
 
 Typpo.prototype.addBlock = function(word) {
   if (word.wordString !== undefined) {
-    this.aliveBlocks.push(new Block(word));
+    console.log(this.x, this.width);
+    word.x = game.rnd.integerInRange(this.x+1, this.width-5);
+    var block = new Block(word);
+    this.blocks.push(block);
+    this.aliveBlocks.push(block);
+    this.blockGroup.add(block.cellGroup);
   }
   else {
     throw 'Word ' + word + ' does not have a wordString.';
@@ -83,45 +90,59 @@ Typpo.prototype.collideCheck = function() {
   // TODO: Would be better to just collide the block group itself, but not sure if it works with block nesting.
   if (this.aliveBlocks.length > 0) {
     this.aliveBlocks.forEach(function(aliveBlock) {
-      var hit = false;
-      game.physics.arcade.overlap(this.walls, aliveBlock.cellGroup, function() {
-        if (!hit) {
-          this.collideBlock(aliveBlock);
-          hit = true;
-        }
+      var hitWall = false;
+      var hitBlock = false;
+      game.physics.arcade.overlap(aliveBlock.cellGroup, this.walls, function(aliveCell, wallCell) {
+        aliveCell.crashed = true;
+        hitWall = true;
       }, null, this);
-      if (!hit) {
+
+      if (!hitWall) {
         this.deadBlocks.forEach(function(deadBlock) {
           if (aliveBlock !== deadBlock) {
-            game.physics.arcade.overlap(aliveBlock.cellGroup, deadBlock.cellGroup, function() {
-              // use call here?
-              console.log("overlap?");
-              if (!hit) {
-                this.collideBlock(aliveBlock);
-                hit = true;
-              }
+            game.physics.arcade.overlap(aliveBlock.cellGroup, deadBlock.cellGroup, function(aliveCell, deadCell) {
+              aliveCell.crashed = true;
+              hitBlock = true;
             }, null, this);
+            if (hitBlock) return false;
           }
         }, this);
+      }
+      if (hitWall || hitBlock) {
+        this.collideBlock(aliveBlock, hitWall);
       }
     }, this);
   }
 };
 
-Typpo.prototype.collideBlock = function(block) {
-  console.log("pre", this.aliveBlocks.length);
+Typpo.prototype.collideBlock = function(block, hitWall) {
+  var crashCallback = function(crashCell, crashObject) {
+    crashCell.crashed = true;
+  };
+
+  if (!hitWall) {
+    block.cells.forEach(function(cell) {
+      while(cell.sprite.crashed !== true) {
+        cell.drop();
+        game.physics.arcade.overlap(cell.sprite, this.walls, crashCallback);
+        for (var i = 0, l = this.blocks.length; i < l; i++) {
+          if (this.blocks[i] !== block) {
+            game.physics.arcade.overlap(cell.sprite, this.blocks[i].cellGroup, crashCallback);
+          }
+        }
+      }
+    }, this);
+  }
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
-  block.lock();
-  console.log("after", this.aliveBlocks.length);
 };
 
 Typpo.prototype.tick = function() {
   if (game.time.now > this.nextDrop) {
+    this.collideCheck();
     this.dropBlocks();
     this.nextDrop = game.time.now + this.dropRate;
   }
-  this.collideCheck();
 };
 
 module.exports = Typpo;
