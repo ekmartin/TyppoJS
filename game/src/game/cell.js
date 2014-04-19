@@ -10,6 +10,7 @@ var Cell = function(letter, color, x, y) {
   this.y = y;
 
   this.locked = false;
+  this.faded = false;
 
   try {
     // not sure if this raises an error if the color is missing
@@ -27,11 +28,14 @@ var Cell = function(letter, color, x, y) {
 module.exports = Cell;
 
 Cell.prototype.fade = function() {
-  // Error handling maybe? See cell constructor
+  this.faded = true;
+  this.text.setText('');
   this.sprite.loadTexture(this.color + 'Faded');
 };
 
 Cell.prototype.unFade = function() {
+  this.faded = false;
+  this.text.setText(this.letter);
   this.sprite.loadTexture(this.color + 'Cell');
 };
 
@@ -43,7 +47,6 @@ Cell.prototype.drop = function() {
   this.y += game.tileSize.y;
   this.sprite.body.y = this.y;
   this.text.y += game.tileSize.y;
-  //this.sprite.body.velocity.y = 50;
 };
 
 Cell.prototype.lock = function() {

@@ -15,6 +15,9 @@ var Game = function() {
     x: 32,
     y: 32
   };
+
+  this.startedWriting = false;
+  this.currentBlock = null;
 };
 
 module.exports = Game;
@@ -29,10 +32,41 @@ Game.prototype = {
     this.player1 = new this.Typpo(15, 20, 0, 0);
     this.player2 = new this.Typpo(15, 20, this.player1.getEndX() + this.tileSize.x, 0);
     this.stage.backgroundColor = '#fff';
+
+    this.input.keyboard.addCallbacks(this, this.keyHandler);
   },
 
   update: function() {
     this.player1.tick();
+  },
+
+  keyHandler: function(e) {
+    var letter = String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
+
+    if (/[a-z]/.test(letter)) {
+      // TODO: This will only work for English words, if the game should be translated this needs to be fixed
+      console.log(this.startedWriting);
+      if (!this.startedWriting) {
+        for (var i = 0, l = this.player1.aliveBlocks.length; i < l; i++) {
+          if (letter === this.player1.aliveBlocks[i].next.letter) {
+            if (!this.player1.fadeBlock(this.player1.aliveBlocks[i])) {
+              this.startedWriting = true;
+              this.currentBlock = this.player1.aliveBlocks[i];
+            }
+          }
+        }
+      }
+      else {
+        console.log(this.currentBlock.next.letter);
+        if (letter === this.currentBlock.next.letter) {
+          if (this.player1.fadeBlock(this.currentBlock)) {
+            this.startedWriting = false;
+            this.currentBlock = null;
+          }
+        }
+      }
+    }
+
   },
 
   render: function() {

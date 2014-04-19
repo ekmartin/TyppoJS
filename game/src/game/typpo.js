@@ -28,6 +28,8 @@ var Typpo = function (width, height, positionX, positionY) {
     this.aliveBlocks = [];
     this.deadBlocks = [];
 
+    this.currentBlock = null;
+
     this.testWord = {
       wordString: 'test',
       color: 'blue',
@@ -133,6 +135,7 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
       }
     }, this);
   }
+
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
   block.lock();
@@ -143,6 +146,24 @@ Typpo.prototype.tick = function() {
     this.collideCheck();
     this.dropBlocks();
     this.nextDrop = game.time.now + this.dropRate;
+  }
+};
+
+Typpo.prototype.fadeBlock = function(block) {
+  if (this.currentBlock === null || block === this.currentBlock) {
+    if (block.fadeNext()) {
+      this.currentBlock = null;
+      block.cellGroup.destroy();
+      this.blocks.splice(this.blocks.indexOf(this.blocks.indexOf(block), 1));
+      return true;
+    }
+    else {
+      this.currentBlock = block;
+      return false;
+    }
+  }
+  else {
+    throw 'Trying to fade another block than the current one.';
   }
 };
 

@@ -25,6 +25,11 @@ var Block = function(word) {
     this.cellGroup.add(cell.sprite);
     this.cells.push(cell);
   }
+
+  this.next = {
+    letter: this.wordString[0].toLowerCase(),
+    cell: this.cells[0],
+  };
 };
 
 module.exports = Block;
@@ -45,5 +50,20 @@ Block.prototype.lock = function() {
   this.cells.forEach(function(cell) {
     cell.lock();
   });
+};
+
+Block.prototype.fadeNext = function() {
+  this.next.cell.fade();
+  var index = this.cells.indexOf(this.next.cell);
+  if (index === this.cells.length-1) {
+    // no more cells to fade.
+    this.next = {};
+    return true;
+  }
+  else {
+    this.next.letter = this.wordString[index+1].toLowerCase();
+    this.next.cell = this.cells[index+1];
+    return false;
+  }
 };
 }());
