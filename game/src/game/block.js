@@ -11,6 +11,7 @@ var Block = function(word) {
   this.x = word.x;
   this.y = 0;
   this.cellGroup = game.add.group(game.world, 'cellGroup', false, true, Phaser.Physics.arcade);
+  this.textGroup = game.add.group();
   this.cells = [];
 
   /*this.wordString.forEach(function(c, i) {
@@ -23,6 +24,7 @@ var Block = function(word) {
   for (var i = 0, wordLength = this.wordString.length; i < wordLength; i++) {
     var cell = new Cell(this.wordString[i], this.color, (this.x+i)*game.tileSize.x, this.y*game.tileSize.y);
     this.cellGroup.add(cell.sprite);
+    this.textGroup.add(cell.text);
     this.cells.push(cell);
   }
 
@@ -52,12 +54,30 @@ Block.prototype.lock = function() {
   });
 };
 
+Block.prototype.resetNext = function() {
+  this.next = {
+    letter: null,
+    cell: null
+  };
+};
+
+Block.prototype.giveUp = function() {
+  this.resetNext();
+  this.textGroup.destroy();
+  for (var i = this.cells.length-1; i >= 0; i--) {
+    if (this.cells[i].faded) {
+      this.cells[i].sprite.destroy();
+      this.cells.splice(i, 1);
+    }
+  }
+};
+
 Block.prototype.fadeNext = function() {
   this.next.cell.fade();
   var index = this.cells.indexOf(this.next.cell);
   if (index === this.cells.length-1) {
     // no more cells to fade.
-    this.next = {};
+    this.resetNext();
     return true;
   }
   else {

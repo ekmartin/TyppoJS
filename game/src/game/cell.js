@@ -29,18 +29,18 @@ module.exports = Cell;
 
 Cell.prototype.fade = function() {
   this.faded = true;
-  this.text.setText('');
+  console.log(this.color + 'Faded');
   this.sprite.loadTexture(this.color + 'Faded');
 };
 
 Cell.prototype.unFade = function() {
   this.faded = false;
-  this.text.setText(this.letter);
   this.sprite.loadTexture(this.color + 'Cell');
 };
 
-Cell.prototype.destroy = function() {
-  this.sprite.kill();
+Cell.prototype.removeText = function() {
+  // This removes the text for good.
+  this.text.destroy();
 };
 
 Cell.prototype.drop = function() {

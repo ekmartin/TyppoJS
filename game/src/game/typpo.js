@@ -30,12 +30,6 @@ var Typpo = function (width, height, positionX, positionY) {
 
     this.currentBlock = null;
 
-    this.testWord = {
-      wordString: 'test',
-      color: 'blue',
-      x: (5*game.tileSize.x)+this.x
-    };
-
     for (var x = 0; x < this.width; x += 1) {
       for (var y = 0; y < this.height; y += 1) {
         if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
@@ -67,7 +61,13 @@ Typpo.prototype.dropBlocks = function() {
   }, this);
 
   if (this.dropCounter >= this.dropTreshold) {
-    this.addBlock(this.testWord);
+    var wString = String(game.rnd.integerInRange(100, 99999));
+    var testWord = {
+      wordString: wString,
+      color: 'blue',
+      x: game.rnd.integerInRange(1, this.width-wString.length-1)
+    };
+    this.addBlock(testWord);
     this.dropCounter = 0;
   }
   else {
@@ -77,7 +77,6 @@ Typpo.prototype.dropBlocks = function() {
 
 Typpo.prototype.addBlock = function(word) {
   if (word.wordString !== undefined) {
-    word.x = game.rnd.integerInRange(this.x+1, this.width-5);
     var block = new Block(word);
     this.blocks.push(block);
     this.aliveBlocks.push(block);
@@ -136,6 +135,9 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
     }, this);
   }
 
+  if (this.currentBlock === block) {
+    block.cancelCurrentBlock();
+  }
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
   block.lock();
@@ -149,21 +151,37 @@ Typpo.prototype.tick = function() {
   }
 };
 
+Typpo.prototype.cancelCurrentBlock = function() {
+  this.currentBlock.cells.forEach(function(cell) {
+    cell.unFade();
+  }, this);
+  this.currentBlock = null;
+};
+
+Typpo.prototype.giveUpCurrentBlock = function() {
+  //this.aliveBlocks.splice(this.aliveBlocks.indexOf(this.currentBlock), 1);
+  this.currentBlock.giveUp();
+  this.currentBlock = null;
+};
+
 Typpo.prototype.fadeBlock = function(block) {
-  if (this.currentBlock === null || block === this.currentBlock) {
-    if (block.fadeNext()) {
-      this.currentBlock = null;
-      block.cellGroup.destroy();
-      this.blocks.splice(this.blocks.indexOf(this.blocks.indexOf(block), 1));
-      return true;
+  if (block === undefined) {
+    if (this.currentBlock !== null) {
+      block = this.currentBlock;
     }
-    else {
-      this.currentBlock = block;
-      return false;
-    }
+    else throw 'Trying to fade current block before a block has been started on.';
+  }
+  if (block.fadeNext()) {
+    this.currentBlock = null;
+    block.textGroup.destroy();
+    block.cellGroup.destroy();
+    this.blocks.splice(this.blocks.indexOf(block), 1);
+    this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
+    return true;
   }
   else {
-    throw 'Trying to fade another block than the current one.';
+    this.currentBlock = block;
+    return false;
   }
 };
 

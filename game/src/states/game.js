@@ -15,9 +15,6 @@ var Game = function() {
     x: 32,
     y: 32
   };
-
-  this.startedWriting = false;
-  this.currentBlock = null;
 };
 
 module.exports = Game;
@@ -42,29 +39,29 @@ Game.prototype = {
 
   keyHandler: function(e) {
     var letter = String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
-
-    if (/[a-z]/.test(letter)) {
+    if (/[a-z0-9]/.test(letter)) {
       // TODO: This will only work for English words, if the game should be translated this needs to be fixed
-      console.log(this.startedWriting);
-      if (!this.startedWriting) {
+      if (this.player1.currentBlock === null) {
         for (var i = 0, l = this.player1.aliveBlocks.length; i < l; i++) {
           if (letter === this.player1.aliveBlocks[i].next.letter) {
-            if (!this.player1.fadeBlock(this.player1.aliveBlocks[i])) {
-              this.startedWriting = true;
-              this.currentBlock = this.player1.aliveBlocks[i];
-            }
+            this.player1.fadeBlock(this.player1.aliveBlocks[i]);
+            // Play good sound
+            break;
           }
+        }
+      }
+      else if (letter === this.player1.currentBlock.next.letter) {
+        if (this.player1.fadeBlock()) {
+          // Word complete, play sound?
         }
       }
       else {
-        console.log(this.currentBlock.next.letter);
-        if (letter === this.currentBlock.next.letter) {
-          if (this.player1.fadeBlock(this.currentBlock)) {
-            this.startedWriting = false;
-            this.currentBlock = null;
-          }
-        }
+        // Play bad sound
       }
+    }
+
+    else if (e.keyIdentifier === 'Enter') {
+      this.player1.giveUpCurrentBlock();
     }
 
   },
