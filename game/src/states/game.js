@@ -30,10 +30,6 @@ Game.prototype = {
     this.player2 = new this.Typpo(15, 20, this.player1.getEndX() + this.tileSize.x, 0);
     this.stage.backgroundColor = '#fff';
 
-    this.game.socket.emit('hei');
-    this.game.socket.on('heiback', function() {
-      console.log("fikk hei tilbake");
-    });
     this.input.keyboard.addCallbacks(this, this.keyHandler);
   },
 
