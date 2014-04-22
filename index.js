@@ -29,7 +29,4 @@ server.listen(app.get('port'), function() {
   console.log('Listening on %d', app.get('port'));
 });
 
-
-io.sockets.on('connection', function(socket) {
-
-});
+require('./game-server/server')(io);
