@@ -30,6 +30,10 @@ Game.prototype = {
     this.player2 = new this.Typpo(15, 20, this.player1.getEndX() + this.tileSize.x, 0);
     this.stage.backgroundColor = '#fff';
 
+    this.game.socket.emit('hei');
+    this.game.socket.on('heiback', function() {
+      console.log("fikk hei tilbake");
+    });
     this.input.keyboard.addCallbacks(this, this.keyHandler);
   },
 
@@ -65,19 +69,6 @@ Game.prototype = {
     }
 
   },
-
-  render: function() {
-    /*
-    if (this.player1.aliveBlocks.length > 0) {
-      this.player1.walls.forEach(function(wall) {
-        this.game.debug.body(wall);
-      }, this);
-      //this.game.debug.bodyInfo(this.player1.aliveBlocks[0].cellGroup.getAt(0), 20, 20);
-      //this.game.debug.bodyInfo(this.player1.aliveBlocks[1].cellGroup.getAt(0), 20, 400);
-      this.game.debug.body(this.player1.aliveBlocks[0].cellGroup.getAt(0));
-    }
-    */
-  }
 };
 })();
 
