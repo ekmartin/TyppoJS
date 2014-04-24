@@ -30,11 +30,37 @@ Game.prototype = {
     this.player2 = new this.Typpo(15, 20, this.player1.getEndX() + this.tileSize.x, 0);
     this.stage.backgroundColor = '#fff';
 
+    this.hasStarted = false;
+    this.countdown = 3;
+    this.countdownText = this.add.text(this.world.width/2, this.world.height/2, String(this.countdown));
+    this.lastCount = this.time.now;
+
     this.input.keyboard.addCallbacks(this, this.keyHandler);
   },
 
   update: function() {
-    this.player1.tick();
+    if (this.game.socketHandler.gotMatch) {
+      if (!this.hasStarted) {
+        this.countdownText.setText(String(this.countdown));
+        if (this.countdown > 0) {
+          if (this.time.elapsedSecondsSince(this.lastCount) > 1) {
+            console.log(this.countdown);
+            this.countdown--;
+            this.lastCount = this.time.now;
+          }
+        }
+        else {
+          this.countdownText.destroy();
+          this.hasStarted = true;
+        }
+      }
+      else {
+        this.player1.tick();
+      }
+    }
+    else {
+      console.log("looking for match");
+    }
   },
 
   keyHandler: function(e) {

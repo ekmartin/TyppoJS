@@ -17,3 +17,5 @@ Player.prototype.setMatch = function(match) {
 Player.prototype.leaveMatch = function() {
   this.match = null;
 };
+
+module.exports = Player;

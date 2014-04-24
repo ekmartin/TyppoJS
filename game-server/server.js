@@ -6,6 +6,18 @@ var Player = require('./player')
 function startServer(io) {
   var playersSearching = [];
   io.sockets.on('connection', function(client) {
+    function getPlayer(callback) {
+      try {
+        client.get('player', function(err, player) {
+          if (err || player === null) throw 'Couldn\'t get the socket\'s player.';
+          callback(player);
+        });
+      }
+      catch (e) {
+        console.error('Failed at getting the socket\'s player-object'.red, e);
+      }
+    }
+
     client.emit('connected');
 
     client.on('hello', function(nickname) {
@@ -17,7 +29,7 @@ function startServer(io) {
     });
 
     client.on('setnick', function(nickname) {
-      client.get('player', function(player) {
+      getPlayer(function(player) {
         player.nickname = nickname;
         client.emit('setnick done');
       });
@@ -25,27 +37,28 @@ function startServer(io) {
 
     client.on('findmatch', function() {
       // Could probably emit something back so the player knows something went wrong (TODO).
-      var player = client.get('player');
-      if (player !== undefined) {
+      getPlayer(function(player) {
+        console.log("got inside".blue, playersSearching.length);
         playersSearching.push(player);
-        if (playersSearching.length > 2) {
+        if (playersSearching.length >= 2) {
           console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
                       playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
           var match = new Match(playersSearching[0], playersSearching[1]);
           player.setMatch(match);
         }
-      }
+      });
     });
 
     client.on('disconnect', function() {
-      var player = client.get('player');
-      if (player.match !== null) {
-        player.match.disconnection(player);
-      }
-      else {
-        // delete stuff?
-        console.log("Player disconnected without being in a match".blue);
-      }
+      getPlayer(function(player) {
+        if (player.match !== null) {
+          player.match.disconnection(player);
+        }
+        else {
+          // delete stuff?
+          console.log("Player disconnected without being in a match".blue);
+        }
+      });
     });
   });
 }
