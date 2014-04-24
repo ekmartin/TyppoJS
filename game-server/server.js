@@ -32,7 +32,19 @@ function startServer(io) {
           console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
                       playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
           var match = new Match(playersSearching[0], playersSearching[1]);
+          player.setMatch(match);
         }
+      }
+    });
+
+    client.on('disconnect', function() {
+      var player = client.get('player');
+      if (player.match !== null) {
+        player.match.disconnection(player);
+      }
+      else {
+        // delete stuff?
+        console.log("Player disconnected without being in a match".blue);
       }
     });
   });
