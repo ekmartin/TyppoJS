@@ -5,7 +5,8 @@ var express     = require('express')
   , server      = require('http').createServer(app)
   , io          = require('socket.io').listen(server)
   , stylus      = require('stylus')
-  , nib         = require('nib');
+  , nib         = require('nib')
+  , colors      = require('colors');
 
 app.disable('x-powered-by');
 app.set('port', process.env.PORT || 3000);
