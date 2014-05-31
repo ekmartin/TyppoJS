@@ -2,8 +2,8 @@
 
 var express     = require('express')
   , app         = module.exports = express()
-  , server      = require('http').createServer(app)
-  , io          = require('socket.io').listen(server)
+  , server      = require('http').Server(app)
+  , io          = require('socket.io')(server)
   , stylus      = require('stylus')
   , nib         = require('nib')
   , colors      = require('colors');
@@ -12,10 +12,6 @@ app.disable('x-powered-by');
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/game/views');
-
-io.configure(function() {
-  io.set('transports', ['websocket']);
-});
 
 app.use(stylus.middleware({
   src: __dirname + '/assets',

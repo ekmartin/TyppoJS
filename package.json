@@ -7,20 +7,19 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "ekmartin",
-  "license": "ISC",
   "dependencies": {
-    "browserify": "~3.41.0",
-    "colors": "^0.6.2",
-    "express": "~4.0.0",
-    "jade": "~1.3.1",
-    "lodash": "~2.4.1",
-    "nib": "~1.0.2",
-    "node-uuid": "^1.4.1",
-    "socket.io": "~0.9.16",
-    "stylus": "~0.43.1"
+    "browserify": "*",
+    "colors": "*",
+    "express": "*",
+    "jade": "*",
+    "lodash": "*",
+    "nib": "*",
+    "node-uuid": "*",
+    "socket.io": "*",
+    "stylus": "*"
   },
   "devDependencies": {
-    "supervisor": "~0.6.0",
-    "browserify-middleware": "~2.5.0"
+    "supervisor": "*",
+    "browserify-middleware": "*"
   }
 }

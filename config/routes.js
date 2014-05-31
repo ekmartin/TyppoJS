@@ -8,5 +8,5 @@ module.exports = function(app) {
     res.render('index');
   });
 
-  app.get('/game.js', browserify('../game/src/main.js'));
+  app.get('/game.js', browserify('./game/src/main.js'));
 };

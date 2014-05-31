@@ -1,60 +1,47 @@
 'use strict';
 
-var Match = function(player1, player2) {
+var uuid = require('node-uuid'),
+    _    = require('lodash');
+
+var Match = function(io, players) {
   // Should maybe use host/client principle instead of this p2p similiar stuff.
 
-  this.player1 = player1;
-  this.player2 = player2;
+  this.id = uuid.v4();
+  this.io = io;
 
-  this.players = [this.player1, this.player2];
+  _.forEach(players, function(player) {
+    player.client.join(this.id);
+  }, this);
 
-  this.emitAll('foundmatch');
-
-  this.player1.client.on('fadeBlock', function(block) {
-    this.player2.client.emit('fadeBlock', { block: block });
+  this.playerNicks = players.map(function(player) {
+    return player.nickname;
   });
 
-  this.player2.client.on('fadeBlock', function(block) {
-    this.player1.client.emit('fadeBlock', { block: block });
+  this.io.to(this.id).emit('foundMatch', this.playerNicks);
+
+  this.attachListeners();
+}
+
+
+Match.prototype.attachListeners = function() {
+  this.io.on('ready', function() {
+    this.io.to(this.id).emit('start');
   });
 
-  this.player1.client.on('sendGray', function() {
-    this.player2.client.emit('sendGray');
+  this.io.on('fadeBlock', function(block) {
+    this.io.to(this.id).broadcast('fadeBlock', {
+      block: block
+    });
   });
 
-  this.player2.client.on('sendGray', function() {
-    this.player1.client.emit('sendGray');
+  this.io.on('sendGray', function() {
+    this.io.to(this.id).broadcast('sendGray');
   });
 
-  this.player1.client.on('lost', function() {
-    this.player2.client.emit('won');
-    this.deleteMatch();
+  this.io.on('lost', function() {
+    // TODO: Need to say which player.
+    this.io.to(this.id).broadcast('playerOut');
   });
-
-  this.player2.client.on('lost', function() {
-    this.player1.client.emit('won');
-    this.deleteMatch();
-  });
-};
-
-Match.prototype.emitAll = function(msg) {
-  this.players.forEach(function(player) {
-    player.client.emit(msg);
-  });
-};
-
-Match.prototype.disconnection = function(player) {
-  if (player === this.player1) {
-    this.player2.client.emit('opponent-dc');
-  }
-  else {
-    this.player1.client.emit('opponent-dc');
-  }
-};
-
-Match.prototype.deleteMatch = function() {
-  this.player1.leaveMatch();
-  this.player2.leaveMatch();
-};
+}
 
 module.exports = Match;
