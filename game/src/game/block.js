@@ -1,35 +1,40 @@
 (function(){
 'use strict';
 
-var Cell  = require('./cell')
-  , game  = require('../states/game').game;
+var Cell  = require('./cell'),
+    game  = require('../states/game').game;
 
-var Block = function(word) {
-  this.wordString = word.wordString.toUpperCase();
-  this.color = word.color;
+
+var Block = function( wordObject) {
+  console.log("word", wordObject);
+
+  this.word = wordObject.word.toUpperCase();
+  this.color = wordObject.color;
   this.locked = false;
-  this.x = word.x;
+  this.id = wordObject.id;
+  this.x = wordObject.x;
   this.y = 0;
   this.cellGroup = game.add.group(game.world, 'cellGroup', false, true, Phaser.Physics.arcade);
   this.textGroup = game.add.group();
   this.cells = [];
 
-  /*this.wordString.forEach(function(c, i) {
-    console.log('fE', this.wordString, c, i);
+  /*this.word.forEach(function(c, i) {
+    console.log('fE', this.word, c, i);
     var cell = new Cell(c, this.color, this.x+i*game.tileSize.x, this.y);
     this.cellGroup.add(cell.sprite);
     this.cells.push(cell);
   });*/
 
-  for (var i = 0, wordLength = this.wordString.length; i < wordLength; i++) {
-    var cell = new Cell(this.wordString[i], this.color, (this.x+i)*game.tileSize.x, this.y*game.tileSize.y);
+  console.log("x?", this.x);
+  for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
+    var cell = new Cell(this.word[i], this.color, this.x+(i*game.tileSize.x), this.y);
     this.cellGroup.add(cell.sprite);
     this.textGroup.add(cell.text);
     this.cells.push(cell);
   }
 
   this.next = {
-    letter: this.wordString[0].toLowerCase(),
+    letter: this.word[0].toLowerCase(),
     cell: this.cells[0],
   };
 };
@@ -81,7 +86,7 @@ Block.prototype.fadeNext = function() {
     return true;
   }
   else {
-    this.next.letter = this.wordString[index+1].toLowerCase();
+    this.next.letter = this.word[index+1].toLowerCase();
     this.next.cell = this.cells[index+1];
     return false;
   }

@@ -1,18 +1,28 @@
 (function(){
 'use strict';
 
-var Block = require('./block')
-  , game  = require('../states/game').game;
+var Block = require('./block'),
+    game  = require('../states/game').game;
 
+function checkMeasures(game, measures) {
+  return measures.positionX + measures.width*game.tileSize.x < game.game.width &&
+    measures.positionY + measures.height*game.tileSize.y < game.game.height;
+}
 
-var Typpo = function (width, height, positionX, positionY) {
-  if (positionX + width*game.tileSize.x < game.game.width && positionY + height*game.tileSize.y < game.game.height) {
-    this.width = width;
-    this.height = height;
-    this.realWidth = width*game.tileSize.x;
-    this.realHeight = height*game.tileSize.y;
-    this.x = positionX;
-    this.y = positionY;
+var Typpo = function (isPlayer, wordList, measures) {
+  if (checkMeasures(game, measures)) {
+
+    this.isPlayer = isPlayer;
+
+    this.width = measures.width;
+    this.height = measures.height;
+    this.realWidth = this.width*game.tileSize.x;
+    this.realHeight = this.height*game.tileSize.y;
+    this.x = measures.positionX;
+    this.y = measures.positionY;
+
+    this.wordList = wordList;
+    this.wordIndex = 0;
 
     this.nextDrop = 0;
 
@@ -61,13 +71,9 @@ Typpo.prototype.dropBlocks = function() {
   }, this);
 
   if (this.dropCounter >= this.dropTreshold) {
-    var wString = String(game.rnd.integerInRange(100, 99999));
-    var testWord = {
-      wordString: wString,
-      color: 'blue',
-      x: game.rnd.integerInRange(1, this.width-wString.length-1)
-    };
-    this.addBlock(testWord);
+    this.addBlock(this.wordList[this.wordIndex]);
+    this.wordIndex += 1;
+
     this.dropCounter = 0;
   }
   else {
@@ -75,15 +81,17 @@ Typpo.prototype.dropBlocks = function() {
   }
 };
 
-Typpo.prototype.addBlock = function(word) {
-  if (word.wordString !== undefined) {
-    var block = new Block(word);
+Typpo.prototype.addBlock = function(wordObject) {
+  if (wordObject.word !== undefined) {
+    wordObject.x = game.tileSize.x*wordObject.x + this.x;
+    console.log("ny: ", game.tileSize.x, wordObject.x, this.x);
+    var block = new Block(wordObject);
     this.blocks.push(block);
     this.aliveBlocks.push(block);
     this.blockGroup.add(block.cellGroup);
   }
   else {
-    throw 'Word ' + word + ' does not have a wordString.';
+    throw 'WordObject ' + word + ' does not have a word.';
   }
 };
 
@@ -171,6 +179,9 @@ Typpo.prototype.fadeBlock = function(block) {
     }
     else throw 'Trying to fade current block before a block has been started on.';
   }
+
+  this.emitEvent('fadeBlock', block.id);
+
   if (block.fadeNext()) {
     this.currentBlock = null;
     block.textGroup.destroy();
@@ -185,5 +196,17 @@ Typpo.prototype.fadeBlock = function(block) {
   }
 };
 
+Typpo.prototype.emitEvent = function(event, data) {
+  if (this.isPlayer) {
+    console.log("Emitting", event, data);
+    var socket = game.game.socketHandler.socket;
+    if (data) {
+      socket.emit(event, data);
+    }
+    else {
+      socket.emit(event);
+    }
+  }
+}
 module.exports = Typpo;
 }());

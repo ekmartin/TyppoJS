@@ -2,8 +2,8 @@
 
 var uuid = require('node-uuid');
 
-var Player = function(client, nickname) {
-  this.client = client;
+var Player = function Player(socket, nickname) {
+  this.socket = socket;
   this.nickname = nickname;
   this.uuid = uuid.v4();
 

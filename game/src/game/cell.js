@@ -1,9 +1,9 @@
 (function(){
 'use strict';
 
-var game = require('../states/game').game;
+var game  = require('../states/game').game;
 
-var Cell = function(letter, color, x, y) {
+var Cell = function( letter, color, x, y) {
   this.letter = letter;
   this.color = color;
   this.x = x;

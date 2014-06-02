@@ -3,45 +3,52 @@
 var uuid = require('node-uuid'),
     _    = require('lodash');
 
-var Match = function(io, players) {
-  // Should maybe use host/client principle instead of this p2p similiar stuff.
-
+var Match = function(io, wordList, players) {
   this.id = uuid.v4();
   this.io = io;
 
-  _.forEach(players, function(player) {
-    player.client.join(this.id);
+  this.wordList = wordList.getWords(1000);
+  this.players = players;
+
+  _.forEach(this.players, function(player) {
+    player.socket.join(this.id);
   }, this);
 
-  this.playerNicks = players.map(function(player) {
+  this.playerNicks = this.players.map(function(player) {
     return player.nickname;
   });
 
-  this.io.to(this.id).emit('foundMatch', this.playerNicks);
+  this.io.to(this.id).emit('foundMatch', {
+    players: this.playerNicks,
+    wordList: this.wordList
+  });
 
   this.attachListeners();
 }
 
 
 Match.prototype.attachListeners = function() {
-  this.io.on('ready', function() {
+  /*this.io.on('ready', function() {
     this.io.to(this.id).emit('start');
-  });
+  });*/
+  console.log('hooked', this.id);
+  _.forEach(this.players, function(player) {
+    var socket = player.socket;
 
-  this.io.on('fadeBlock', function(block) {
-    this.io.to(this.id).broadcast('fadeBlock', {
-      block: block
-    });
-  });
+    socket.on('fadeBlock', function(blockID) {
+      console.log('Fading block.', this.id, this);
+      socket.broadcast.to(this.id).emit('fadeBlock', blockID);
+    }.bind(this));
 
-  this.io.on('sendGray', function() {
-    this.io.to(this.id).broadcast('sendGray');
-  });
+    socket.on('sendGray', function() {
+      socket.broadcast.to(this.id).emit('sendGray');
+    }.bind(this));
 
-  this.io.on('lost', function() {
-    // TODO: Need to say which player.
-    this.io.to(this.id).broadcast('playerOut');
-  });
+    socket.on('lost', function() {
+      // TODO: Need to say which player.
+      socket.broadcast.to(this.id).emit('playerOut');
+    }.bind(this));
+  }, this);
 }
 
 module.exports = Match;

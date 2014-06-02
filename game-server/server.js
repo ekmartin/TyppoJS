@@ -3,7 +3,7 @@
 var Player = require('./player')
   , Match  = require('./match');
 
-function startServer(io) {
+function startServer(io, wordList) {
   var playersSearching = [];
   io.on('connection', function(client) {
     client.emit('connected');
@@ -29,7 +29,7 @@ function startServer(io) {
         if (playersSearching.length >= 2) {
           console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
                       playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
-          var match = new Match(io, [playersSearching[0], playersSearching[1]]);
+          var match = new Match(io, wordList, [playersSearching[0], playersSearching[1]]);
           client.player.setMatch(match);
         }
       });

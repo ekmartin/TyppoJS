@@ -6,7 +6,9 @@ var express     = require('express')
   , io          = require('socket.io')(server)
   , stylus      = require('stylus')
   , nib         = require('nib')
-  , colors      = require('colors');
+  , colors      = require('colors')
+  , WordList    = require('./game-server/WordList')
+  , gameServer  = require('./game-server/server');
 
 app.disable('x-powered-by');
 app.set('port', process.env.PORT || 3000);
@@ -26,4 +28,6 @@ server.listen(app.get('port'), function() {
   console.log('Listening on %d', app.get('port'));
 });
 
-require('./game-server/server')(io);
+var wordList = new WordList(13);
+
+gameServer(io, wordList);

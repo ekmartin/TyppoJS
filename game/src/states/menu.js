@@ -12,7 +12,6 @@ Menu.prototype = {
 
   update: function() {
     if (this.game.socketHandler.connected && this.game.socketHandler.nickname !== null) {
-      this.game.socketHandler.findMatch();
       this.game.state.start('Game');
     }
     else {
