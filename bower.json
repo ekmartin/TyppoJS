@@ -7,6 +7,6 @@
   ],
   "private": true,
   "dependencies": {
-    "phaser": "~2.0.2"
+    "phaser-official": "*"
   }
 }
