@@ -22,30 +22,29 @@ function startServer(io, wordList) {
 
     client.on('findMatch', function() {
       // Could probably emit something back so the player knows something went wrong (TODO).
-        console.log("got inside".blue, playersSearching.length, client.player);
-        playersSearching.push(client.player);
-        console.log("after".green, playersSearching.length);
+      console.log("got inside".blue, playersSearching.length, client.player);
+      playersSearching.push(client.player);
+      console.log("after".green, playersSearching.length);
 
-        if (playersSearching.length >= 2) {
-          console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
-                      playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
-          var match = new Match(io, wordList, [playersSearching[0], playersSearching[1]]);
-          client.player.setMatch(match);
-        }
-      });
+      if (playersSearching.length >= 2) {
+        console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
+                    playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
+        var match = new Match(io, wordList, [playersSearching[0], playersSearching[1]]);
+      }
     });
-    /*
+
     client.on('disconnect', function() {
-      getPlayer(function(player) {
-        if (player.match !== null) {
-          player.match.disconnection(player);
-        }
-        else {
-          // delete stuff?
-          console.log("Player disconnected without being in a match".blue);
-        }
-      });
-    });*/
+      var player = client.player;
+      if (player.match !== null) {
+        console.log('disconnected');
+        player.match.disconnected(player);
+      }
+      else {
+        // delete stuff?
+        console.log("Player disconnected without being in a match".blue);
+      }
+    });
+  });
 }
 
 

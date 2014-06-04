@@ -40,6 +40,8 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.currentBlock = null;
 
+    this.lastTick = null;
+
     for (var x = 0; x < this.width; x += 1) {
       for (var y = 0; y < this.height; y += 1) {
         if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
@@ -88,10 +90,11 @@ Typpo.prototype.addBlock = function(wordObject) {
     var block = new Block(wordObject);
     this.blocks.push(block);
     this.aliveBlocks.push(block);
+
     this.blockGroup.add(block.cellGroup);
   }
   else {
-    throw 'WordObject ' + word + ' does not have a word.';
+    throw 'WordObject ' + wordObject + ' does not have a word.';
   }
 };
 
@@ -144,7 +147,7 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
   }
 
   if (this.currentBlock === block) {
-    block.cancelCurrentBlock();
+    this.cancelCurrentBlock();
   }
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
@@ -152,10 +155,18 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
 };
 
 Typpo.prototype.tick = function() {
-  if (game.time.now > this.nextDrop) {
-    this.collideCheck();
-    this.dropBlocks();
-    this.nextDrop = game.time.now + this.dropRate;
+  var now = game.time.now;
+
+  if (now > this.nextDrop) {
+    console.log("tick at ", now);
+    var delta = now - this.lastTick;
+    var n = ~~(delta/this.dropRate); // Integer division (floored)
+    for (var i = 0; i < n; i++) {
+      this.collideCheck();
+      this.dropBlocks();
+    }
+    this.lastTick = now;
+    this.nextDrop = now + this.dropRate;
   }
 };
 
@@ -207,6 +218,11 @@ Typpo.prototype.emitEvent = function(event, data) {
       socket.emit(event);
     }
   }
-}
+};
+
+Typpo.prototype.startGame = function(startTime) {
+  this.lastTick = startTime;
+};
+
 module.exports = Typpo;
 }());

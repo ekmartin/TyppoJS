@@ -3,8 +3,21 @@
 
 var _ = require('lodash');
 
+var GameStatus = {
+  NOTLIVE: 'Game hasn\'t started yet',
+  LIVE: 'Game isn\'t complete.',
+  LOST: 'Game lost.',
+  WON: 'Game won.'
+};
 
 var Game = function() {
+
+  this.gameStatus = null;
+  this.startCountDown = null;
+  this.countdown = null;
+  this.countdownText = null;
+  this.lastCount = null;
+
   this.blockFontStyle = {
     font: '32px Consolas',
     fill: '#fff'
@@ -16,10 +29,7 @@ var Game = function() {
   };
 };
 
-Game.prototype.startGame = function(players, wordList) {
-  var test = wordList.slice();
-  test[0].x = 500;
-
+Game.prototype.startCountdown = function(players, wordList) {
   // :(
   exports.game = this;
 
@@ -41,8 +51,16 @@ Game.prototype.startGame = function(players, wordList) {
   this.startCountDown = true;
 };
 
+Game.prototype.startGame = function() {
+  console.log("starting now", this.time.now);
+  var startTime = this.time.now;
+  this.gameStatus = GameStatus.LIVE;
+  this.player1.startGame(startTime);
+  this.player2.startGame(startTime);
+};
+
 Game.prototype.keyHandler = function(e) {
-  if (this.hasStarted) {
+  if (this.gameStatus === GameStatus.LIVE) {
     var letter = String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
     if (/[a-z0-9]/.test(letter)) {
       // TODO: This will only work for English words, if the game should be translated this needs to be fixed
@@ -76,7 +94,7 @@ Game.prototype.create = function() {
   this.game.physics.startSystem(Phaser.Physics.Arcade);
   this.stage.backgroundColor = '#fff';
 
-  this.hasStarted = false;
+  this.gameStatus = GameStatus.NOTLIVE;
   this.startCountDown = false;
   this.countdown = 3;
   this.countdownText = this.add.text(this.world.width/2, this.world.height/2, String(this.countdown));
@@ -92,7 +110,7 @@ Game.prototype.fadeBlock = function(blockID) {
 
 Game.prototype.update = function() {
   if (this.startCountDown) {
-    if (!this.hasStarted) {
+    if (this.gameStatus === GameStatus.NOTLIVE) {
       this.countdownText.setText(String(this.countdown));
       if (this.countdown > 0) {
         if (this.time.elapsedSecondsSince(this.lastCount) > 1) {
@@ -101,15 +119,25 @@ Game.prototype.update = function() {
           this.lastCount = this.time.now;
         }
       }
-      else {
-        this.countdownText.destroy();
-        this.hasStarted = true;
-      }
     }
     else {
-      this.player1.tick();
-      this.player2.tick();
+      if (this.gameStatus === GameStatus.LIVE) {
+        this.player1.tick();
+        this.player2.tick();
+      }
+      else {
+        console.log('Game done, you won.');
+      }
     }
+  }
+};
+
+Game.prototype.gameDone = function(gameWon) {
+  if (gameWon) {
+    this.gameStatus = GameStatus.WON;
+  }
+  else {
+    this.gameStatus = GameStatus.LOST;
   }
 };
 

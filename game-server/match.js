@@ -11,6 +11,7 @@ var Match = function(io, wordList, players) {
   this.players = players;
 
   _.forEach(this.players, function(player) {
+    player.setMatch(this);
     player.socket.join(this.id);
   }, this);
 
@@ -23,15 +24,27 @@ var Match = function(io, wordList, players) {
     wordList: this.wordList
   });
 
-  this.attachListeners();
-}
+  setTimeout(function() {
+    console.log("called start")
+    this.io.to(this.id).emit('startMatch');
+  }.bind(this), 3000);
 
+  this.attachListeners();
+};
+
+Match.prototype.disconnected = function(player) {
+  var others = _.without(this.players, player);
+  // Just to make it possible to have multiple players in the future.
+  // Should probably also mark the player as dead somehow.
+  if (others.length === 1) {
+    others[0].socket.emit('opponentLeft');
+    _.forEach(players, function(player) {
+      player.leaveMatch();
+    });
+  }
+};
 
 Match.prototype.attachListeners = function() {
-  /*this.io.on('ready', function() {
-    this.io.to(this.id).emit('start');
-  });*/
-  console.log('hooked', this.id);
   _.forEach(this.players, function(player) {
     var socket = player.socket;
 
@@ -49,6 +62,6 @@ Match.prototype.attachListeners = function() {
       socket.broadcast.to(this.id).emit('playerOut');
     }.bind(this));
   }, this);
-}
+};
 
 module.exports = Match;
