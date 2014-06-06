@@ -111,7 +111,7 @@ Game.prototype.fadeLagBlocks = function() {
     console.log('looping lagblocks found', lagBlock, ' from id', lagBlockID);
     if (lagBlock !== undefined) {
       this.player2.fadeBlock(lagBlock);
-      this.lagBlocks.splice(lagBlockID, 1);
+      this.lagBlocks = _.without(this.lagBlocks, lagBlockID);
     }
   }, this);
 }

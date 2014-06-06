@@ -29,6 +29,8 @@ function startServer(io, wordList) {
         console.log('Started a new match between ' + playersSearching[0].nickname + ' (' + playersSearching[0].uuid + ') and ' +
                     playersSearching[1].nickname + ' (' + playersSearching[1].uuid + ').');
         var match = new Match(io, wordList, [playersSearching[0], playersSearching[1]]);
+        // Remove the two players that just got into a match.
+        playersSearching.splice(0, 2);
       }
     });
 
@@ -50,6 +52,5 @@ function startServer(io, wordList) {
     });
   });
 }
-
 
 module.exports = startServer;
