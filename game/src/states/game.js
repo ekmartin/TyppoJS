@@ -18,11 +18,6 @@ var Game = function() {
   this.countdownText = null;
   this.lastCount = null;
 
-  this.blockFontStyle = {
-    font: '32px Consolas',
-    fill: '#fff'
-  };
-
   this.tileSize = {
     x: 32,
     y: 32
@@ -90,6 +85,8 @@ Game.prototype.keyHandler = function(e) {
 };
 
 Game.prototype.create = function() {
+  this.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js');
+
   this.game.socketHandler.findMatch(this);
   this.game.physics.startSystem(Phaser.Physics.Arcade);
   this.stage.backgroundColor = '#fff';

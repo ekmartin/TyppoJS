@@ -38,7 +38,7 @@ Match.prototype.disconnected = function(player) {
   // Should probably also mark the player as dead somehow.
   if (others.length === 1) {
     others[0].socket.emit('opponentLeft');
-    _.forEach(players, function(player) {
+    _.forEach(this.players, function(player) {
       player.leaveMatch();
     });
   }

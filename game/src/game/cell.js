@@ -21,8 +21,18 @@ var Cell = function( letter, color, x, y) {
   catch (e) {
     throw e + ' - Sprite missing, color: ' + this.color;
   }
-  this.text = game.add.text(this.x+(this.sprite.width/2), this.y+(this.sprite.height/2)+5, this.letter, game.blockFontStyle);
-  this.text.anchor.set(0.5, 0.5);
+
+
+  this.text = game.add.text(this.x+this.sprite.body.width/2,
+    this.y+this.sprite.body.height/2, this.letter, {
+    fill: '#fff',
+    align: 'center'
+  });
+
+  this.text.anchor.setTo(0.5);
+
+  this.text.font = 'Droid Sans Mono';
+
 };
 
 module.exports = Cell;

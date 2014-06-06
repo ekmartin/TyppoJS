@@ -22,7 +22,6 @@ function startServer(io, wordList) {
 
     client.on('findMatch', function() {
       // Could probably emit something back so the player knows something went wrong (TODO).
-      console.log("got inside".blue, playersSearching.length, client.player);
       playersSearching.push(client.player);
       console.log("after".green, playersSearching.length);
 
@@ -35,13 +34,18 @@ function startServer(io, wordList) {
 
     client.on('disconnect', function() {
       var player = client.player;
-      if (player.match !== null) {
-        console.log('disconnected');
-        player.match.disconnected(player);
+      if (!!player)  {
+        if (player.match !== null) {
+          console.log('disconnected');
+          player.match.disconnected(player);
+        }
+        else {
+          // delete stuff?
+          console.log("Player disconnected without being in a match".blue);
+        }
       }
       else {
-        // delete stuff?
-        console.log("Player disconnected without being in a match".blue);
+        console.log('No player record stored.');
       }
     });
   });

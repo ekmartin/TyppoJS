@@ -18,14 +18,6 @@ var Block = function( wordObject) {
   this.textGroup = game.add.group();
   this.cells = [];
 
-  /*this.word.forEach(function(c, i) {
-    console.log('fE', this.word, c, i);
-    var cell = new Cell(c, this.color, this.x+i*game.tileSize.x, this.y);
-    this.cellGroup.add(cell.sprite);
-    this.cells.push(cell);
-  });*/
-
-  console.log("x?", this.x);
   for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
     var cell = new Cell(this.word[i], this.color, this.x+(i*game.tileSize.x), this.y);
     this.cellGroup.add(cell.sprite);
