@@ -49,7 +49,7 @@ Match.prototype.attachListeners = function() {
     var socket = player.socket;
 
     socket.on('fadeBlock', function(blockID) {
-      console.log('Fading block.', this.id, this);
+      console.log('Fading block.', blockID);
       socket.broadcast.to(this.id).emit('fadeBlock', blockID);
     }.bind(this));
 

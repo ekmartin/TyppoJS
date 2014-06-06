@@ -191,6 +191,7 @@ Typpo.prototype.fadeBlock = function(block) {
     else throw 'Trying to fade current block before a block has been started on.';
   }
 
+  console.log('fading block', block.id, block);
   this.emitEvent('fadeBlock', block.id);
 
   if (block.fadeNext()) {
@@ -211,7 +212,7 @@ Typpo.prototype.emitEvent = function(event, data) {
   if (this.isPlayer) {
     console.log("Emitting", event, data);
     var socket = game.game.socketHandler.socket;
-    if (data) {
+    if (data !== undefined) {
       socket.emit(event, data);
     }
     else {

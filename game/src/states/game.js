@@ -17,6 +17,7 @@ var Game = function() {
   this.countdown = null;
   this.countdownText = null;
   this.lastCount = null;
+  this.lagBlocks = null;
 
   this.tileSize = {
     x: 32,
@@ -96,13 +97,27 @@ Game.prototype.create = function() {
   this.countdown = 3;
   this.countdownText = this.add.text(this.world.width/2, this.world.height/2, String(this.countdown));
   this.lastCount = this.time.now;
+  this.lagBlocks = [];
 
   this.input.keyboard.addCallbacks(this, this.keyHandler);
 };
 
+Game.prototype.fadeLagBlocks = function() {
+  // If the blocks don't exist at this exact moment the user is probably lagging behind or similar,
+  // which means the blocks most likely will appear later on.
+
+  _.forEach(this.lagBlocks, function(lagBlockID) {
+    var lagBlock = _.find(this.player2.blocks, { 'id': lagBlockID });
+    console.log('looping lagblocks found', lagBlock, ' from id', lagBlockID);
+    if (lagBlock !== undefined) {
+      this.player2.fadeBlock(lagBlock);
+      this.lagBlocks.splice(lagBlockID, 1);
+    }
+  }, this);
+}
 Game.prototype.fadeBlock = function(blockID) {
-  console.log("fading block with id", blockID, "found block", _.find(this.player2.blocks, { 'id': blockID }));
-  this.player2.fadeBlock(_.find(this.player2.blocks, { 'id': blockID }));
+  this.lagBlocks.push(blockID);
+  this.fadeLagBlocks();
 };
 
 Game.prototype.update = function() {
@@ -121,6 +136,7 @@ Game.prototype.update = function() {
       if (this.gameStatus === GameStatus.LIVE) {
         this.player1.tick();
         this.player2.tick();
+        this.fadeLagBlocks();
       }
       else {
         console.log('Game done, you won.');
