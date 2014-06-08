@@ -6,8 +6,8 @@ var Block = require('./block'),
     _     = require('lodash');
 
 function checkMeasures(game, measures) {
-  return measures.positionX + measures.width*game.tileSize.x < game.game.width &&
-    measures.positionY + measures.height*game.tileSize.y < game.game.height;
+  return measures.positionX + measures.width*game.tileSize.x <= game.game.width &&
+    measures.positionY + measures.height*game.tileSize.y <= game.game.height;
 }
 
 var Typpo = function (isPlayer, wordList, measures) {

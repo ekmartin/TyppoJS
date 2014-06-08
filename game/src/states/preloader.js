@@ -14,20 +14,20 @@ Preloader.prototype = {
 
     // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');
-    this.load.image('locked','/assets/img/locked.png');
+    this.load.image('lockedTile','/assets/img/lockedTile.png');
     this.load.image('wallTile','/assets/img/WallTile.png');
-    this.load.image('blueCell','/assets/img/bluecell.png');
-    this.load.image('blueFaded','/assets/img/bluefaded.png');
-    this.load.image('greenCell','/assets/img/greencell.png');
-    this.load.image('greenFaded','/assets/img/greenfaded.png');
-    this.load.image('orangeCell','/assets/img/orangecell.png');
-    this.load.image('orangeFaded','/assets/img/orangefaded.png');
-    this.load.image('purpleCell','/assets/img/purplecell.png');
-    this.load.image('purpleFaded','/assets/img/purplefaded.png');
-    this.load.image('redCell','/assets/img/redcell.png');
-    this.load.image('redFaded','/assets/img/redfaded.png');
-    this.load.image('tealCell','/assets/img/tealcell.png');
-    this.load.image('tealFaded','/assets/img/tealfaded.png');
+    this.load.image('blueTile', '/assets/img/blueTile.png');
+    this.load.image('blueFaded', '/assets/img/blueFaded.png');
+    this.load.image('yellowTile', '/assets/img/yellowTile.png');
+    this.load.image('yellowFaded', '/assets/img/yellowFaded.png');
+    this.load.image('greenTile', '/assets/img/greenTile.png');
+    this.load.image('greenFaded', '/assets/img/greenFaded.png');
+    this.load.image('redTile', '/assets/img/redTile.png');
+    this.load.image('redFaded', '/assets/img/redFaded.png');
+    this.load.image('purpleTile', '/assets/img/purpleTile.png');
+    this.load.image('purpleFaded', '/assets/img/purpleFaded.png');
+    this.load.image('darkBlueTile', '/assets/img/darkBlueTile.png');
+    this.load.image('darkBlueFaded', '/assets/img/darkBlueFaded.png');
 
   },
 

@@ -29,12 +29,13 @@ Game.prototype.startCountdown = function(players, wordList) {
   // :(
   exports.game = this;
 
+  this.game.stage.backgroundColor = '#FFFFF0';
   var Typpo = require('../game/typpo');
 
   this.player1 = new Typpo(true, _.cloneDeep(wordList), {
     width: 15,
     height: 20,
-    positionX: 0,
+    positionX: this.tileSize.x,
     positionY: 0
   });
 
@@ -53,6 +54,7 @@ Game.prototype.startGame = function() {
   this.gameStatus = GameStatus.LIVE;
   this.player1.startGame(startTime);
   this.player2.startGame(startTime);
+  this.countdownText.destroy();
 };
 
 Game.prototype.keyHandler = function(e) {
@@ -95,7 +97,14 @@ Game.prototype.create = function() {
   this.gameStatus = GameStatus.NOTLIVE;
   this.startCountDown = false;
   this.countdown = 3;
-  this.countdownText = this.add.text(this.world.width/2, this.world.height/2, String(this.countdown));
+
+  var fontSize = 70;
+  this.countdownText = this.add.text(this.world.width/2-fontSize/2,
+    this.world.height/2-3*this.tileSize.y,
+    String(this.countdown));
+  this.countdownText.fontSize = fontSize;
+  this.countdownText.font = 'Droid Sans Mono';
+
   this.lastCount = this.time.now;
   this.lagBlocks = [];
 
@@ -114,7 +123,8 @@ Game.prototype.fadeLagBlocks = function() {
       this.lagBlocks = _.without(this.lagBlocks, lagBlockID);
     }
   }, this);
-}
+};
+
 Game.prototype.fadeBlock = function(blockID) {
   this.lagBlocks.push(blockID);
   this.fadeLagBlocks();
@@ -162,7 +172,7 @@ Game.prototype.render = function() {
       }
     }
   }
-}
+};
 
 exports.constructor = Game;
 

@@ -17,7 +17,7 @@ var Cell = function(letter, color, positionOptions) {
 
   try {
     // not sure if this raises an error if the color is missing
-    this.sprite = game.add.sprite(this.x, this.y, this.color + 'Cell');
+    this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
   }
   catch (e) {
     throw e + ' - Sprite missing, color: ' + this.color;
@@ -46,7 +46,7 @@ Cell.prototype.fade = function() {
 
 Cell.prototype.unFade = function() {
   this.faded = false;
-  this.sprite.loadTexture(this.color + 'Cell');
+  this.sprite.loadTexture(this.color + 'Tile');
 };
 
 Cell.prototype.removeText = function() {

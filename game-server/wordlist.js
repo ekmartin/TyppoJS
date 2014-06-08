@@ -4,9 +4,9 @@ var fs = require('fs'),
 var WordList = function WordList(maxLength) {
   // Should be stored in a database instead.
 
-  this.colors = ['red', 'blue', 'green'];
+  this.colors = ['blue', 'darkBlue', 'purple', 'green', 'yellow', 'red'];
   var that = this;
-  //#GHETTOHACK
+  //#GHETTOHACK. Should be in a database or at least read async. Redis maybe?
   var file = fs.readFileSync(__dirname + '/data/wordlist.txt',  { encoding: 'utf8' });
   this.words = file.split('\r\n');
   this.words = this.words.filter(function(word) {
