@@ -6,6 +6,13 @@ module.exports = Preloader;
 
 Preloader.prototype = {
   preload: function() {
+
+    // Menu:
+    this.load.image('logo', '/assets/img/logo.png');
+    this.load.spritesheet('findGame', '/assets/img/findGame.png', 594, 112);
+    this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
+
+    // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');
     this.load.image('locked','/assets/img/locked.png');
     this.load.image('wallTile','/assets/img/WallTile.png');

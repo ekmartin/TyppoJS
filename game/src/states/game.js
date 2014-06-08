@@ -158,7 +158,6 @@ Game.prototype.render = function() {
   if (false) {
     for (var i = 0; i < this.player1.blocks.length; i++) {
       for (var j = 0; j < this.player1.blocks[i].cells.length; j++) {
-        console.log('dbging');
         this.game.debug.body(this.player1.blocks[i].cells[j].sprite);
       }
     }

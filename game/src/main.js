@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 
-var game = new Phaser.Game(1200, 800, Phaser.AUTO, 'game-container');
+var game = new Phaser.Game(992, 700, Phaser.AUTO, 'game-container');
 
 // Connect to the socket.io server and add the connection to the current game for future reference:
 game.state.game.socket = io.connect('http://localhost:3000');
