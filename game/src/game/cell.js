@@ -3,28 +3,29 @@
 
 var game  = require('../states/game').game;
 
-var Cell = function( letter, color, x, y) {
+var Cell = function(letter, color, positionOptions) {
   this.letter = letter;
   this.color = color;
-  this.x = x;
-  this.y = y;
+  this.x = positionOptions.x;
+  this.y = positionOptions.y;
+  this.realX = positionOptions.realX;
+  this.realY = positionOptions.realY;
 
   this.locked = false;
   this.faded = false;
 
+
   try {
     // not sure if this raises an error if the color is missing
     this.sprite = game.add.sprite(this.x, this.y, this.color + 'Cell');
-    game.game.physics.enable(this.sprite, Phaser.Physics.arcade);
-    this.sprite.body.setSize(this.sprite.body.width, this.sprite.body.height+1, 0, -1);
   }
   catch (e) {
     throw e + ' - Sprite missing, color: ' + this.color;
   }
 
 
-  this.text = game.add.text(this.x+this.sprite.body.width/2,
-    this.y+this.sprite.body.height/2, this.letter, {
+  this.text = game.add.text(this.x+game.tileSize.x/2,
+    this.y+game.tileSize.y/2, this.letter, {
     fill: '#fff',
     align: 'center'
   });
@@ -53,10 +54,21 @@ Cell.prototype.removeText = function() {
   this.text.destroy();
 };
 
-Cell.prototype.drop = function() {
-  this.y += game.tileSize.y;
-  this.sprite.body.y = this.y;
-  this.text.y += game.tileSize.y;
+Cell.prototype.drop = function(blocked) {
+  if (!blocked[this.realY+1][this.realX]) {
+    this.y += game.tileSize.y;
+    this.text.y += game.tileSize.y;
+    this.sprite.y = this.y;
+    this.realY++;
+
+    if (this.locked) {
+      this.drop(blocked);
+    }
+  }
+  else {
+    return true;
+  }
+
 };
 
 Cell.prototype.lock = function() {

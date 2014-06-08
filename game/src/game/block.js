@@ -2,24 +2,29 @@
 'use strict';
 
 var Cell  = require('./cell'),
-    game  = require('../states/game').game;
+    game  = require('../states/game').game,
+    _     = require('lodash');
 
 
-var Block = function( wordObject) {
+var Block = function(wordObject, x) {
   console.log("word", wordObject);
 
   this.word = wordObject.word.toUpperCase();
   this.color = wordObject.color;
   this.locked = false;
   this.id = wordObject.id;
-  this.x = wordObject.x;
-  this.y = 0;
-  this.cellGroup = game.add.group(game.world, 'cellGroup', false, true, Phaser.Physics.arcade);
+  this.x = x;
+  this.cellGroup = game.add.group(game.world, 'cellGroup', false);
   this.textGroup = game.add.group();
   this.cells = [];
 
   for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
-    var cell = new Cell(this.word[i], this.color, this.x+(i*game.tileSize.x), this.y);
+    var cell = new Cell(this.word[i], this.color, {
+      x: this.x+(i*game.tileSize.x),
+      y: 0,
+      realX: wordObject.x+i,
+      realY: 0
+    });
     this.cellGroup.add(cell.sprite);
     this.textGroup.add(cell.text);
     this.cells.push(cell);
@@ -39,9 +44,17 @@ Block.prototype.destroy = function() {
   });
 };
 
-Block.prototype.drop = function() {
-  this.cells.forEach(function(cell) {
-    cell.drop();
+Block.prototype.drop = function(blocked) {
+  _.some(this.cells, function(cell) {
+    if (cell.drop(blocked) === true) {
+      console.log('AIIIIIIII');
+      this.locked = true;
+      _.forEach(this.cells, function(cell) {
+        cell.lock();
+        cell.drop(blocked);
+      });
+      return true;
+    }
   }, this);
 };
 

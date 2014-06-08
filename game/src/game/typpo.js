@@ -2,7 +2,8 @@
 'use strict';
 
 var Block = require('./block'),
-    game  = require('../states/game').game;
+    game  = require('../states/game').game,
+    _     = require('lodash');
 
 function checkMeasures(game, measures) {
   return measures.positionX + measures.width*game.tileSize.x < game.game.width &&
@@ -66,16 +67,12 @@ Typpo.prototype.getEndX = function() {
   return this.x + this.realWidth;
 };
 
-Typpo.prototype.dropBlocks = function() {
-  this.aliveBlocks.forEach(function(block) {
-    // TODO: Add locked/grey check.
-    block.drop();
-  }, this);
+Typpo.prototype.dropTick = function() {
+  this.dropBlocks();
 
   if (this.dropCounter >= this.dropTreshold) {
     this.addBlock(this.wordList[this.wordIndex]);
     this.wordIndex += 1;
-
     this.dropCounter = 0;
   }
   else {
@@ -85,19 +82,62 @@ Typpo.prototype.dropBlocks = function() {
 
 Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
-    wordObject.x = game.tileSize.x*wordObject.x + this.x;
-    console.log("ny: ", game.tileSize.x, wordObject.x, this.x);
-    var block = new Block(wordObject);
-    this.blocks.push(block);
-    this.aliveBlocks.push(block);
+    var blocked = this.getBlockedArray();
+    var lost = false;
 
-    this.blockGroup.add(block.cellGroup);
+    for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
+      if (blocked[0][i]) {
+        lost = true;
+        console.log('done');
+        game.gameDone(false);
+        break;
+      }
+    }
+    if (!lost) {
+      var x = game.tileSize.x*wordObject.x + this.x;
+      var block = new Block(wordObject, x);
+      this.blocks.push(block);
+      this.aliveBlocks.push(block);
+
+      this.blockGroup.add(block.cellGroup);
+    }
   }
   else {
     throw 'WordObject ' + wordObject + ' does not have a word.';
   }
 };
 
+Typpo.prototype.getBlockedArray = function() {
+  var blocked = [];
+
+  for (var y = 0; y < this.height; y++) {
+    var yArr = [];
+    for (var x = 0; x < this.width; x++) {
+      if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
+        yArr.push(true);
+      }
+      else yArr.push(false);
+    }
+    blocked.push(yArr);
+  }
+
+  _.forEach(this.blocks, function(block) {
+    _.forEach(block.cells, function(cell) {
+      blocked[cell.realY][cell.realX] = true;
+    });
+  });
+
+  return blocked;
+};
+
+Typpo.prototype.dropBlocks = function() {
+  var blocked = this.getBlockedArray();
+  _.forEach(this.blocks, function(block) {
+    block.drop(blocked);
+  });
+};
+
+/*
 Typpo.prototype.collideCheck = function() {
   // TODO: Would be better to just collide the block group itself, but not sure if it works with block nesting.
   if (this.aliveBlocks.length > 0) {
@@ -152,18 +192,18 @@ Typpo.prototype.collideBlock = function(block, hitWall) {
   this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
   this.deadBlocks.push(block);
   block.lock();
-};
+};*/
 
 Typpo.prototype.tick = function() {
   var now = game.time.now;
 
   if (now > this.nextDrop) {
-    console.log("tick at ", now);
     var delta = now - this.lastTick;
     var n = ~~(delta/this.dropRate); // Integer division (floored)
+    console.log('dropping ', n);
     for (var i = 0; i < n; i++) {
-      this.collideCheck();
-      this.dropBlocks();
+      //this.collideCheck();
+      this.dropTick();
     }
     this.lastTick = now;
     this.nextDrop = now + this.dropRate;
