@@ -43,8 +43,8 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.lastTick = null;
 
-    for (var x = 0; x < this.width; x += 1) {
-      for (var y = 0; y < this.height; y += 1) {
+    for (var x = 0; x < this.width; x++) {
+      for (var y = 0; y < this.height; y++) {
         if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
           var wall = this.walls.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'wallTile');
           wall.body.immovable = true;
@@ -136,63 +136,6 @@ Typpo.prototype.dropBlocks = function() {
     block.drop(blocked);
   });
 };
-
-/*
-Typpo.prototype.collideCheck = function() {
-  // TODO: Would be better to just collide the block group itself, but not sure if it works with block nesting.
-  if (this.aliveBlocks.length > 0) {
-    this.aliveBlocks.forEach(function(aliveBlock) {
-      var hitWall = false;
-      var hitBlock = false;
-      game.physics.arcade.overlap(aliveBlock.cellGroup, this.walls, function(aliveCell, wallCell) {
-        aliveCell.crashed = true;
-        hitWall = true;
-      }, null, this);
-
-      if (!hitWall) {
-        this.deadBlocks.forEach(function(deadBlock) {
-          if (aliveBlock !== deadBlock) {
-            game.physics.arcade.overlap(aliveBlock.cellGroup, deadBlock.cellGroup, function(aliveCell, deadCell) {
-              aliveCell.crashed = true;
-              hitBlock = true;
-            }, null, this);
-            if (hitBlock) return false;
-          }
-        }, this);
-      }
-      if (hitWall || hitBlock) {
-        this.collideBlock(aliveBlock, hitWall);
-      }
-    }, this);
-  }
-};
-
-Typpo.prototype.collideBlock = function(block, hitWall) {
-  var crashCallback = function(crashCell, crashObject) {
-    crashCell.crashed = true;
-  };
-
-  if (!hitWall) {
-    block.cells.forEach(function(cell) {
-      while(cell.sprite.crashed !== true) {
-        cell.drop();
-        game.physics.arcade.overlap(cell.sprite, this.walls, crashCallback);
-        for (var i = 0, l = this.blocks.length; i < l; i++) {
-          if (this.blocks[i] !== block) {
-            game.physics.arcade.overlap(cell.sprite, this.blocks[i].cellGroup, crashCallback);
-          }
-        }
-      }
-    }, this);
-  }
-
-  if (this.currentBlock === block) {
-    this.cancelCurrentBlock();
-  }
-  this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
-  this.deadBlocks.push(block);
-  block.lock();
-};*/
 
 Typpo.prototype.tick = function() {
   var now = game.time.now;

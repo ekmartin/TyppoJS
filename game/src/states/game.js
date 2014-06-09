@@ -62,14 +62,15 @@ Game.prototype.keyHandler = function(e) {
     var letter = String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
     if (/[a-z0-9]/.test(letter)) {
       // TODO: This will only work for English words, if the game should be translated this needs to be fixed
+      console.log('curr', this.player1.currentBlock);
       if (this.player1.currentBlock === null) {
-        for (var i = 0, l = this.player1.aliveBlocks.length; i < l; i++) {
-          if (letter === this.player1.aliveBlocks[i].next.letter) {
-            this.player1.fadeBlock(this.player1.aliveBlocks[i]);
+        _.some(this.player1.aliveBlocks, function(block) {
+          if (letter === block.next.letter) {
+            this.player1.fadeBlock(block);
             // Play good sound
-            break;
+            return true;
           }
-        }
+        }, this);
       }
       else if (letter === this.player1.currentBlock.next.letter) {
         if (this.player1.fadeBlock()) {
