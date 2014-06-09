@@ -36,7 +36,6 @@ var Typpo = function (isPlayer, wordList, measures) {
     this.dropRate = 1000;
 
     this.blocks = [];
-    this.aliveBlocks = [];
 
     this.currentBlock = null;
 
@@ -95,7 +94,6 @@ Typpo.prototype.addBlock = function(wordObject) {
       var x = game.tileSize.x*wordObject.x + this.x;
       var block = new Block(wordObject, x);
       this.blocks.push(block);
-      this.aliveBlocks.push(block);
 
       this.blockGroup.add(block.cellGroup);
     }
@@ -175,7 +173,6 @@ Typpo.prototype.cancelCurrentBlock = function() {
 };*/
 
 Typpo.prototype.giveUpCurrentBlock = function() {
-  this.aliveBlocks.splice(this.aliveBlocks.indexOf(this.currentBlock), 1);
   this.currentBlock.giveUp();
   this.currentBlock = null;
 };
@@ -196,7 +193,6 @@ Typpo.prototype.fadeBlock = function(block) {
     block.textGroup.destroy();
     block.cellGroup.destroy();
     this.blocks.splice(this.blocks.indexOf(block), 1);
-    this.aliveBlocks.splice(this.aliveBlocks.indexOf(block), 1);
     return true;
   }
   else {

@@ -1,8 +1,7 @@
+(function(){
 'use strict';
 
-var Menu            = function() {}
-  , SocketHandler   = require('../game/socket-handler');
-
+var Menu            = function() {};
 module.exports = Menu;
 
 Menu.prototype = {
@@ -16,12 +15,12 @@ Menu.prototype = {
 
     this.findGameButton = this.add.button(this.world.width/2-buttonWidth/2, 300, 'findGame', this.findGame, this, 1, 0, 0);
     this.privateMatchbutton = this.add.button(this.world.width/2-buttonWidth/2, 450, 'privateMatch', this.privateMatch, this, 1, 0, 0);
-
-    this.game.socketHandler = new SocketHandler(this.game.socket, 'temp' + this.rnd.integerInRange(0, 9999));
   },
 
   findGame: function() {
-    this.game.state.start('Game');
+    this.game.state.start('Connect');
   },
 
 };
+
+})();

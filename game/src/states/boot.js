@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var Boot = function() {};
@@ -15,3 +16,4 @@ Boot.prototype = {
     this.game.state.start('Preloader');
   }
 };
+})();

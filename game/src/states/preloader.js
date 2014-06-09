@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 var Preloader   = function() {};
@@ -11,6 +12,10 @@ Preloader.prototype = {
     this.load.image('logo', '/assets/img/logo.png');
     this.load.spritesheet('findGame', '/assets/img/findGame.png', 594, 112);
     this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
+
+    // Connect:
+    this.load.image('connectingText', '/assets/img/connectingText.png');
+    this.load.spritesheet('loadingAnimation', '/assets/img/loadingAnimation.png', 120, 128);
 
     // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');
@@ -35,3 +40,5 @@ Preloader.prototype = {
     this.game.state.start('Menu');
   }
 };
+
+})();
