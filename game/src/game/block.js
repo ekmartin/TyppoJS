@@ -7,8 +7,6 @@ var Cell  = require('./cell'),
 
 
 var Block = function(wordObject, x) {
-  console.log("word", wordObject);
-
   this.word = wordObject.word.toUpperCase();
   this.color = wordObject.color;
   this.locked = false;
@@ -47,12 +45,15 @@ Block.prototype.destroy = function() {
 Block.prototype.drop = function(blocked) {
   _.some(this.cells, function(cell) {
     if (cell.drop(blocked) === true) {
-      console.log('AIIIIIIII');
       this.locked = true;
-      _.forEach(this.cells, function(cell) {
-        cell.lock();
-        cell.drop(blocked);
-      });
+
+      for (var i = this.cells.length-1; i >= 0; i--) {
+        this.cells[i].lock();
+        this.cells[i].drop(blocked);
+        if (this.cells[i].sprite.game === null) {
+          this.cells.splice(i, 1);
+        }
+      }
       return true;
     }
   }, this);
@@ -71,7 +72,7 @@ Block.prototype.resetNext = function() {
   };
 };
 
-Block.prototype.giveUp = function() {
+Block.prototype.giveUp = function(dropCells, blocked) {
   this.resetNext();
   this.textGroup.destroy();
   for (var i = this.cells.length-1; i >= 0; i--) {

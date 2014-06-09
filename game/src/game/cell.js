@@ -74,5 +74,8 @@ Cell.prototype.drop = function(blocked) {
 Cell.prototype.lock = function() {
   this.locked = true;
   this.text.destroy();
+  if (this.faded) {
+    this.sprite.destroy();
+  }
 };
 }());

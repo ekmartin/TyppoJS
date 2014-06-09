@@ -64,7 +64,7 @@ Game.prototype.keyHandler = function(e) {
       // TODO: This will only work for English words, if the game should be translated this needs to be fixed
       console.log('curr', this.player1.currentBlock);
       if (this.player1.currentBlock === null) {
-        _.some(this.player1.aliveBlocks, function(block) {
+        _.some(this.player1.getAliveBlocks(), function(block) {
           if (letter === block.next.letter) {
             this.player1.fadeBlock(block);
             // Play good sound

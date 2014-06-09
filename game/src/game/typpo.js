@@ -37,7 +37,6 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.blocks = [];
     this.aliveBlocks = [];
-    this.deadBlocks = [];
 
     this.currentBlock = null;
 
@@ -88,7 +87,6 @@ Typpo.prototype.addBlock = function(wordObject) {
     for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
       if (blocked[0][i]) {
         lost = true;
-        console.log('done');
         game.gameDone(false);
         break;
       }
@@ -130,11 +128,25 @@ Typpo.prototype.getBlockedArray = function() {
   return blocked;
 };
 
+Typpo.prototype.getAliveBlocks = function() {
+  var aliveBlocks = this.blocks.filter(function(block) {
+    return !block.locked;
+  }, this);
+  return aliveBlocks;
+};
+
 Typpo.prototype.dropBlocks = function() {
   var blocked = this.getBlockedArray();
   _.forEach(this.blocks, function(block) {
     block.drop(blocked);
   });
+
+  if (this.currentBlock !== null) {
+    if (this.currentBlock.locked) {
+      console.log('Jeg satt den jo faen meg til null.');
+      this.currentBlock = null;
+    }
+  }
 };
 
 Typpo.prototype.tick = function() {
@@ -143,9 +155,7 @@ Typpo.prototype.tick = function() {
   if (now > this.nextDrop) {
     var delta = now - this.lastTick;
     var n = ~~(delta/this.dropRate); // Integer division (floored)
-    console.log('dropping ', n);
     for (var i = 0; i < n; i++) {
-      //this.collideCheck();
       this.dropTick();
     }
     this.lastTick = now;
@@ -153,15 +163,19 @@ Typpo.prototype.tick = function() {
   }
 };
 
+/*
+
+// Should the already completed letters be removed when the word collides?
+// If so use this.
 Typpo.prototype.cancelCurrentBlock = function() {
   this.currentBlock.cells.forEach(function(cell) {
     cell.unFade();
   }, this);
   this.currentBlock = null;
-};
+};*/
 
 Typpo.prototype.giveUpCurrentBlock = function() {
-  //this.aliveBlocks.splice(this.aliveBlocks.indexOf(this.currentBlock), 1);
+  this.aliveBlocks.splice(this.aliveBlocks.indexOf(this.currentBlock), 1);
   this.currentBlock.giveUp();
   this.currentBlock = null;
 };
