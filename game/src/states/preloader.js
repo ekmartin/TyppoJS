@@ -12,6 +12,7 @@ Preloader.prototype = {
     this.load.image('logo', '/assets/img/logo.png');
     this.load.spritesheet('findGame', '/assets/img/findGame.png', 594, 112);
     this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
+    this.load.spritesheet('menuButton', '/assets/img/menuButton.png', 297, 112);
 
     // Connect:
     this.load.image('connectingText', '/assets/img/connectingText.png');

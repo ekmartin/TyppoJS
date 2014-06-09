@@ -141,7 +141,6 @@ Typpo.prototype.dropBlocks = function() {
 
   if (this.currentBlock !== null) {
     if (this.currentBlock.locked) {
-      console.log('Jeg satt den jo faen meg til null.');
       this.currentBlock = null;
     }
   }

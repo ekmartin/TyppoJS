@@ -1,14 +1,8 @@
 (function(){
 'use strict';
 
-var _ = require('lodash');
-
-var GameStatus = {
-  NOTLIVE: 'Game hasn\'t started yet',
-  LIVE: 'Game isn\'t complete.',
-  LOST: 'Game lost.',
-  WON: 'Game won.'
-};
+var _           = require('lodash'),
+    GameStatus  = require('../game/game-status');
 
 var Game = function() {
 
@@ -163,6 +157,7 @@ Game.prototype.gameDone = function(gameWon) {
   else {
     this.gameStatus = GameStatus.LOST;
   }
+  this.game.state.start('Done');
 };
 
 Game.prototype.render = function() {
