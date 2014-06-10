@@ -31,6 +31,12 @@ SocketHandler.prototype.findMatch = function(game) {
   }).bind(this));
 };
 
+// Tells the server the player lost.
+SocketHandler.prototype.gameDone = function() {
+  console.log('emitting gamedone.');
+  this.socket.emit('gameDone');
+};
+
 SocketHandler.prototype.attachGameListeners = function() {
   this.socket.on('startMatch', function() {
     console.log("got start now", this.game.time.now);
@@ -46,6 +52,12 @@ SocketHandler.prototype.attachGameListeners = function() {
     console.log('opponent left.', this);
     this.game.gameDone(true);
   }.bind(this));
+
+  this.socket.on('gameDone', function(emitStatus) {
+    console.log('game done..');
+    this.game.gameDone(true, false);
+  }.bind(this));
+
 }
 
 module.exports = SocketHandler;

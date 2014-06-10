@@ -1,7 +1,8 @@
 'use strict';
 
-var uuid = require('node-uuid'),
-    _    = require('lodash');
+var uuid        = require('node-uuid'),
+    GameStatus  = require('../game/src/game/game-status'),
+    _           = require('lodash');
 
 var Match = function(io, wordList, players) {
   this.id = uuid.v4();
@@ -38,10 +39,14 @@ Match.prototype.disconnected = function(player) {
   // Should probably also mark the player as dead somehow.
   if (others.length === 1) {
     others[0].socket.emit('opponentLeft');
-    _.forEach(this.players, function(player) {
-      player.leaveMatch();
-    });
+    this.matchDone();
   }
+};
+
+Match.prototype.matchDone = function() {
+  _.forEach(this.players, function(player) {
+    player.leaveMatch();
+  }, this);
 };
 
 Match.prototype.attachListeners = function() {
@@ -57,10 +62,26 @@ Match.prototype.attachListeners = function() {
       socket.broadcast.to(this.id).emit('sendGray');
     }.bind(this));
 
-    socket.on('lost', function() {
-      // TODO: Need to say which player.
-      socket.broadcast.to(this.id).emit('playerOut');
+    socket.on('gameDone', function() {
+      var emitStatus = GameStatus.WON;
+      /*
+
+      // Players only emit when they lose, so this isn't necessary.
+      switch(gameStatus) {
+        case GameStatus.LOST:
+          emitStatus = GameStatus.WON;
+          break;
+        case GameStatus.WON:
+          emitStatus = GameStatus.LOST;
+          break;
+        default:
+          throw new Error('gameStatus needs to be won/lost, not ' + gameStatus);
+      }*/
+      console.log('telling the other player that he won.');
+      socket.broadcast.to(this.id).emit('gameDone', emitStatus);
+      this.matchDone();
     }.bind(this));
+
   }, this);
 };
 

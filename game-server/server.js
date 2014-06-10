@@ -42,7 +42,7 @@ function startServer(io, wordList) {
           player.match.disconnected(player);
         }
         else {
-          // delete stuff?
+          playersSearching.splice(playersSearching.indexOf(player), 1);
           console.log("Player disconnected without being in a match".blue);
         }
       }

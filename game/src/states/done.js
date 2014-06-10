@@ -14,34 +14,31 @@ function GameStatusException(message) {
 Done.prototype = {
 
   create: function() {
+    this.game.stage.backgroundColor = '#C8F7C5';
 
-    this.doneText = this.add.text(this.world.width/2, 200, '', {
-      font: '30pt Droid Sans Mono',
-      fill: '#e67e22'
+    this.doneText = this.add.text(-999, 200, '', {
+      font: '45pt hallo_sansblack',
+      fill: '#e67e22',
+      align: 'center'
     });
-
-
 
     var game = require('./game').game;
 
-    // Another magic number, centering text is a bitch - TODO.
-    var centeringNumber = 28;
-
-    switch (GameStatus.LOST) {
+    switch (game.gameStatus) {
       case GameStatus.WON:
         this.doneText.setText(GameStatus.WON);
-        this.doneText.x = this.world.width/2 - GameStatus.WON.length*28/2;
+        this.doneText.x = this.world.width/2 - this.doneText.width/2;
         break;
       case GameStatus.LOST:
         this.doneText.setText(GameStatus.LOST);
-        this.doneText.x = this.world.width/2 - GameStatus.WON.length*28/2;
+        this.doneText.x = this.world.width/2 - this.doneText.width/2;
         break;
       default:
         throw new GameStatusException('Invalid GameStatus (not WON/LOST).');
     }
 
     var buttonWidth = 297;
-    this.menuButton = this.add.button(this.world.width/2-buttonWidth/2, 300, 'menuButton', this.menuButton, this, 1, 0, 0);
+    this.menuButton = this.add.button(this.world.width/2-buttonWidth/2, 350, 'menuButton', this.menuButton, this, 1, 0, 0);
   },
 
   menuButton: function() {

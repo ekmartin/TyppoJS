@@ -33,7 +33,7 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.dropTreshold = 4;
     this.dropCounter = this.dropTreshold;
-    this.dropRate = 1000;
+    this.dropRate = 500;
 
     this.blocks = [];
 
@@ -86,7 +86,8 @@ Typpo.prototype.addBlock = function(wordObject) {
     for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
       if (blocked[0][i]) {
         lost = true;
-        game.gameDone(false);
+        // Only care if the player loses, not the one he's spectating.
+        if (this.isPlayer) game.gameDone(false, true);
         break;
       }
     }

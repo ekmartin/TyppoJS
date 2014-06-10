@@ -14,15 +14,7 @@ var Cell = function(letter, color, positionOptions) {
   this.locked = false;
   this.faded = false;
 
-
-  try {
-    // not sure if this raises an error if the color is missing
-    this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
-  }
-  catch (e) {
-    throw e + ' - Sprite missing, color: ' + this.color;
-  }
-
+  this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
 
   this.text = game.add.text(this.x+game.tileSize.x/2,
     this.y+game.tileSize.y/2, this.letter, {

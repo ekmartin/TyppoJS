@@ -8,7 +8,7 @@ module.exports = Connect;
 
 Connect.prototype = {
   create: function() {
-    this.game.stage.backgroundColor = '#FFFFF0';
+    this.game.stage.backgroundColor = '#C8F7C5';
 
     // Hack/magic numbers.. Should make it into a webfont and use it like that instead.
     var connectingWidth = 307;
