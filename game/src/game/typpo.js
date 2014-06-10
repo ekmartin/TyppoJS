@@ -33,7 +33,7 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.dropTreshold = 4;
     this.dropCounter = this.dropTreshold;
-    this.dropRate = 500;
+    this.dropRate = 750;
 
     this.blocks = [];
 
