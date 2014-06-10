@@ -144,8 +144,7 @@ Game.prototype.startCountdown = function(players, wordList) {
   this.startCountDown = true;
 };
 
-Game.prototype.startGame = function() {
-  var startTime = this.time.now;
+Game.prototype.startGame = function(startTime) {
   this.gameStatus = GameStatus.LIVE;
   this.player1.startGame(startTime);
   this.player2.startGame(startTime);

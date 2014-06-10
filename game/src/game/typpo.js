@@ -148,11 +148,13 @@ Typpo.prototype.dropBlocks = function() {
 };
 
 Typpo.prototype.tick = function() {
-  var now = game.time.now;
+  // Even Date seems more reliable than Phaser's time when the game loses focus.
+  var now = new Date().getTime();
 
   if (now > this.nextDrop) {
     var delta = now - this.lastTick;
     var n = ~~(delta/this.dropRate); // Integer division (floored)
+
     for (var i = 0; i < n; i++) {
       this.dropTick();
     }
@@ -185,7 +187,6 @@ Typpo.prototype.fadeBlock = function(block) {
     else throw 'Trying to fade current block before a block has been started on.';
   }
 
-  console.log('fading block', block.id, block);
   this.emitEvent('fadeBlock', block.id);
 
   if (block.fadeNext()) {
