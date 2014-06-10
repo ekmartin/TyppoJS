@@ -7,7 +7,7 @@ var express     = require('express')
   , stylus      = require('stylus')
   , nib         = require('nib')
   , colors      = require('colors')
-  , WordList    = require('./game-server/WordList')
+  , WordList    = require('./game-server/word-list')
   , gameServer  = require('./game-server/server');
 
 app.disable('x-powered-by');
