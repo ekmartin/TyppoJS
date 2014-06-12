@@ -72,11 +72,9 @@ Cell.prototype.up = function() {
 
 Cell.prototype.lock = function() {
   this.locked = true;
+  this.removeText();
   if (this.faded) {
     this.removeSprite();
-  }
-  else {
-    this.removeText();
   }
 };
 }());
