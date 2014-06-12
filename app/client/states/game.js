@@ -2,7 +2,7 @@
 'use strict';
 
 var _           = require('lodash'),
-    GameStatus  = require('../game/game-status');
+    GameStatus  = require('../../common/game-status');
 
 var Game = function() {
   this.gameStatus = null;
@@ -125,7 +125,7 @@ Game.prototype.startCountdown = function(players, wordList) {
   this.findingText.destroy();
   this.loader.destroy();
 
-  var Typpo = require('../game/typpo');
+  var Typpo = require('../typpo');
 
   this.player1 = new Typpo(true, _.cloneDeep(wordList), {
     width: 15,

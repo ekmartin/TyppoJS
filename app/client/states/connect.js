@@ -2,7 +2,7 @@
 'use strict';
 
 var Connect = function() {},
-    SocketHandler   = require('../game/socket-handler');
+    SocketHandler   = require('../socket-handler');
 
 module.exports = Connect;
 

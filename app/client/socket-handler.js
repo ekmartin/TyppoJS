@@ -39,7 +39,7 @@ SocketHandler.prototype.gameDone = function() {
 
 SocketHandler.prototype.attachGameListeners = function() {
   this.socket.on('startMatch', function() {
-    this.game.startGame(new Date().getTime());
+    this.game.startGame(Date.now());
   }.bind(this));
 
   this.socket.on('fadeBlock', function(blockID) {

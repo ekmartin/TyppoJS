@@ -2,7 +2,7 @@
 'use strict';
 
 var Done = function() {},
-    GameStatus  = require('../game/game-status');
+    GameStatus  = require('../../common/game-status');
 
 module.exports = Done;
 

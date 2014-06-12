@@ -1,7 +1,7 @@
 'use strict';
 
 var uuid        = require('node-uuid'),
-    GameStatus  = require('../game/src/game/game-status'),
+    GameStatus  = require('../common/game-status'),
     _           = require('lodash');
 
 var Match = function(io, wordList, players) {

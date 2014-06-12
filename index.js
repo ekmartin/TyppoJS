@@ -7,13 +7,13 @@ var express     = require('express')
   , stylus      = require('stylus')
   , nib         = require('nib')
   , colors      = require('colors')
-  , WordList    = require('./game-server/word-list')
-  , gameServer  = require('./game-server/server');
+  , WordList    = require('./app/server/word-list')
+  , gameServer  = require('./app/server/server');
 
 app.disable('x-powered-by');
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'jade');
-app.set('views', __dirname + '/game/views');
+app.set('views', __dirname + '/app/views');
 
 app.use(stylus.middleware({
   src: __dirname + '/assets',
@@ -22,7 +22,7 @@ app.use(stylus.middleware({
 }));
 app.use(express.static(__dirname + '/public'));
 
-require('./config/routes')(app);
+require('./app/config/routes')(app);
 
 server.listen(app.get('port'), function() {
   console.log('Listening on %d', app.get('port'));

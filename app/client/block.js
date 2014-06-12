@@ -2,36 +2,62 @@
 'use strict';
 
 var Cell  = require('./cell'),
-    game  = require('../states/game').game,
+    game  = require('./states/game').game,
     _     = require('lodash');
 
 
-var Block = function(wordObject, x) {
-  this.word = wordObject.word.toUpperCase();
-  this.color = wordObject.color;
-  this.locked = false;
-  this.id = wordObject.id;
+var Block = function(isGrey, wordObject, x, y) {
+
   this.x = x;
   this.cellGroup = game.add.group(game.world, 'cellGroup', false);
-  this.textGroup = game.add.group();
   this.cells = [];
 
-  for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
-    var cell = new Cell(this.word[i], this.color, {
-      x: this.x+(i*game.tileSize.x),
-      y: 0,
-      realX: wordObject.x+i,
-      realY: 0
-    });
-    this.cellGroup.add(cell.sprite);
-    this.textGroup.add(cell.text);
-    this.cells.push(cell);
-  }
+  if (isGrey === false) {
+    // Add a regular block
+    this.word = wordObject.word.toUpperCase();
+    this.color = wordObject.color;
+    this.locked = false;
+    this.id = wordObject.id;
 
-  this.next = {
-    letter: this.word[0].toLowerCase(),
-    cell: this.cells[0],
-  };
+    for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
+      var cell = new Cell(this.word[i], this.color, {
+        x: this.x+(i*game.tileSize.x),
+        y: 0,
+        origX: wordObject.x+i,
+        origY: 0
+      });
+
+      this.textGroup = game.add.group();
+      this.cellGroup.add(cell.sprite);
+      this.cells.push(cell);
+    }
+
+    this.next = {
+      letter: this.word[0].toLowerCase(),
+      cell: this.cells[0],
+    };
+  }
+  else if (isGrey === true) {
+    // This means the constructor was called to add a grey row, and wordObject thus
+    // refers to the width of the game.
+    this.color = 'locked';
+    this.locked = true;
+
+    for (var i = 0; i < wordObject; i++) {
+      var cell = new Cell('', this.color, {
+        x: this.x+(i*game.tileSize.x),
+        y: y,
+        origX: wordObject.x+i,
+        origY: wordObject.y
+      });
+
+      this.cellGroup.add(cell.sprite);
+      this.cells.push(cell);
+    }
+  }
+  else {
+    throw new Error('isGrey can only be true/false.');
+  }
 };
 
 module.exports = Block;

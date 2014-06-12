@@ -2,7 +2,7 @@
 'use strict';
 
 var Block = require('./block'),
-    game  = require('../states/game').game,
+    game  = require('./states/game').game,
     _     = require('lodash');
 
 function checkMeasures(game, measures) {
@@ -15,10 +15,10 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.isPlayer = isPlayer;
 
-    this.width = measures.width;
-    this.height = measures.height;
-    this.realWidth = this.width*game.tileSize.x;
-    this.realHeight = this.height*game.tileSize.y;
+    this.origWidth = measures.width;
+    this.origHeight = measures.height;
+    this.width = this.origWidth*game.tileSize.x;
+    this.height = this.origHeight*game.tileSize.y;
     this.x = measures.positionX;
     this.y = measures.positionY;
 
@@ -31,9 +31,11 @@ var Typpo = function (isPlayer, wordList, measures) {
     this.background = game.add.group();
     this.blockGroup = game.add.group();
 
-    this.dropTreshold = 4;
+    this.dropTreshold = 3;
     this.dropCounter = this.dropTreshold;
     this.dropRate = 750;
+
+    this.greyCounter = 0;
 
     this.blocks = [];
 
@@ -41,9 +43,9 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.lastTick = null;
 
-    for (var x = 0; x < this.width; x++) {
-      for (var y = 0; y < this.height; y++) {
-        if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
+    for (var x = 0; x < this.origWidth; x++) {
+      for (var y = 0; y < this.origHeight; y++) {
+        if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
           var wall = this.walls.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'wallTile');
           wall.body.immovable = true;
           // TODO: Fix this hacky solution:
@@ -56,16 +58,21 @@ var Typpo = function (isPlayer, wordList, measures) {
     }
   }
   else {
-    throw 'Typpo goes outside the game width.';
+    throw new Error('Typpo goes outside the game width.');
   }
 };
 
 
 Typpo.prototype.getEndX = function() {
-  return this.x + this.realWidth;
+  return this.x + this.width;
 };
 
 Typpo.prototype.dropTick = function() {
+  console.log('before');
+  for(; this.greyCounter > 0; this.greyCounter--) {
+    this.addGrey();
+  }
+  console.log('after');
   this.dropBlocks();
 
   if (this.dropCounter >= this.dropTreshold) {
@@ -80,6 +87,7 @@ Typpo.prototype.dropTick = function() {
 
 Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
+    this.greyCounter++;
     var blocked = this.getBlockedArray();
     var lost = false;
 
@@ -93,24 +101,24 @@ Typpo.prototype.addBlock = function(wordObject) {
     }
     if (!lost) {
       var x = game.tileSize.x*wordObject.x + this.x;
-      var block = new Block(wordObject, x);
+      var block = new Block(false, wordObject, x);
       this.blocks.push(block);
 
       this.blockGroup.add(block.cellGroup);
     }
   }
   else {
-    throw 'WordObject ' + wordObject + ' does not have a word.';
+    throw new Error('WordObject ' + wordObject + ' does not have a word.');
   }
 };
 
 Typpo.prototype.getBlockedArray = function() {
   var blocked = [];
 
-  for (var y = 0; y < this.height; y++) {
+  for (var y = 0; y < this.origHeight; y++) {
     var yArr = [];
-    for (var x = 0; x < this.width; x++) {
-      if (x === 0 || x === (this.width-1) || y === (this.height-1)) {
+    for (var x = 0; x < this.origWidth; x++) {
+      if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
         yArr.push(true);
       }
       else yArr.push(false);
@@ -120,7 +128,7 @@ Typpo.prototype.getBlockedArray = function() {
 
   _.forEach(this.blocks, function(block) {
     _.forEach(block.cells, function(cell) {
-      blocked[cell.realY][cell.realX] = true;
+      blocked[cell.origY][cell.origX] = true;
     });
   });
 
@@ -149,7 +157,7 @@ Typpo.prototype.dropBlocks = function() {
 
 Typpo.prototype.tick = function() {
   // Even Date seems more reliable than Phaser's time when the game loses focus.
-  var now = new Date().getTime();
+  var now = Date.now();
 
   if (now > this.nextDrop) {
     var delta = now - this.lastTick;
@@ -184,7 +192,7 @@ Typpo.prototype.fadeBlock = function(block) {
     if (this.currentBlock !== null) {
       block = this.currentBlock;
     }
-    else throw 'Trying to fade current block before a block has been started on.';
+    else throw new Error('Trying to fade current block before a block has been started on.');
   }
 
   this.emitEvent('fadeBlock', block.id);
@@ -217,6 +225,19 @@ Typpo.prototype.emitEvent = function(event, data) {
 
 Typpo.prototype.startGame = function(startTime) {
   this.lastTick = startTime;
+};
+
+Typpo.prototype.addGrey = function() {
+  var height = this.origHeight - 2;
+  var wordObject = {
+    word: '',
+    x: 0,
+    y: height
+  };
+
+  var block = new Block(true, wordObject, this.x, this.y+(height)*game.tileSize.y);
+  this.blocks.push(block);
+  this.blockGroup.add(block.cellGroup);
 };
 
 module.exports = Typpo;

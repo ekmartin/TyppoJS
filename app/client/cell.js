@@ -1,17 +1,18 @@
 (function(){
 'use strict';
 
-var game  = require('../states/game').game;
+var game  = require('./states/game').game;
 
 var Cell = function(letter, color, positionOptions) {
   this.letter = letter;
   this.color = color;
   this.x = positionOptions.x;
   this.y = positionOptions.y;
-  this.realX = positionOptions.realX;
-  this.realY = positionOptions.realY;
+  this.origX = positionOptions.origX;
+  this.origY = positionOptions.origY;
 
-  this.locked = false;
+  this.locked = !!letter ? false : true;
+  console.log('letter', letter, !!letter, this.locked);
   this.faded = false;
 
   this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
@@ -47,11 +48,11 @@ Cell.prototype.removeText = function() {
 };
 
 Cell.prototype.drop = function(blocked) {
-  if (!blocked[this.realY+1][this.realX]) {
+  if (!blocked[this.origY+1][this.origX]) {
     this.y += game.tileSize.y;
     this.text.y += game.tileSize.y;
     this.sprite.y = this.y;
-    this.realY++;
+    this.origY++;
 
     if (this.locked) {
       this.drop(blocked);
