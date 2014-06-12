@@ -15,6 +15,7 @@ var Typpo = function (isPlayer, wordList, measures) {
   if (checkMeasures(game, measures)) {
 
     this.isPlayer = isPlayer;
+    this.isDone = false;
 
     this.origWidth = measures.width;
     this.origHeight = measures.height;
@@ -34,7 +35,7 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.dropTreshold = 3;
     this.dropCounter = this.dropTreshold;
-    this.dropRate = 750;
+    this.dropRate = 800;
 
     this.greyCounter = 0;
     this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
@@ -66,6 +67,7 @@ Typpo.prototype.getEndX = function() {
 };
 
 Typpo.prototype.dropTick = function() {
+  // Temporarily linear
   for(; this.greyCounter > 0; this.greyCounter--) {
     this.addGrey();
   }
@@ -84,19 +86,22 @@ Typpo.prototype.dropTick = function() {
 
 Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
+
+    if (this.dropRate > 400) {
+      this.dropRate -= 10;
+    }
+
     var blocked = this.getBlockedArray();
-    var lost = false;
 
     for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
       if (blocked[0][i]) {
-        console.log('kom hit', i, wordObject);
-        lost = true;
+        this.isDone = true;
         // Only care if the player loses, not the one he's spectating.
         if (this.isPlayer) game.gameDone(false, true);
         break;
       }
     }
-    if (!lost) {
+    if (!this.isDone) {
       var x = game.tileSize.x*wordObject.x + this.x;
       var block = new Block(false, wordObject, x);
       this.blocks.push(block);
@@ -153,18 +158,20 @@ Typpo.prototype.dropBlocks = function() {
 };
 
 Typpo.prototype.tick = function() {
-  // Even Date seems more reliable than Phaser's time when the game loses focus.
-  var now = Date.now();
+  if (!this.isDone) {
+    // Even Date seems more reliable than Phaser's time when the game loses focus.
+    var now = Date.now();
 
-  if (now > this.nextDrop) {
-    var delta = now - this.lastTick;
-    var n = ~~(delta/this.dropRate); // Integer division (floored)
+    if (now > this.nextDrop) {
+      var delta = now - this.lastTick;
+      var n = ~~(delta/this.dropRate); // Integer division (floored)
 
-    for (var i = 0; i < n; i++) {
-      this.dropTick();
+      for (var i = 0; i < n; i++) {
+        this.dropTick();
+      }
+      this.lastTick = now;
+      this.nextDrop = now + this.dropRate;
     }
-    this.lastTick = now;
-    this.nextDrop = now + this.dropRate;
   }
 };
 
@@ -196,8 +203,6 @@ Typpo.prototype.fadeBlock = function(block) {
 
   if (block.fadeNext()) {
     this.currentBlock = null;
-    block.textGroup.destroy();
-    block.cellGroup.destroy();
     this.blocks.splice(this.blocks.indexOf(block), 1);
     return true;
   }

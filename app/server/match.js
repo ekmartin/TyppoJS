@@ -26,7 +26,6 @@ var Match = function(io, wordList, players) {
   });
 
   setTimeout(function() {
-    console.log("called start")
     this.io.to(this.id).emit('startMatch');
   }.bind(this), 3000);
 
@@ -54,12 +53,12 @@ Match.prototype.attachListeners = function() {
     var socket = player.socket;
 
     socket.on('fadeBlock', function(blockID) {
-      console.log('Fading block.', blockID);
       socket.broadcast.to(this.id).emit('fadeBlock', blockID);
     }.bind(this));
 
-    socket.on('sendGray', function() {
-      socket.broadcast.to(this.id).emit('sendGray');
+    socket.on('greyBlock', function() {
+      console.log('sending grey');
+      socket.broadcast.to(this.id).emit('greyBlock');
     }.bind(this));
 
     socket.on('gameDone', function() {

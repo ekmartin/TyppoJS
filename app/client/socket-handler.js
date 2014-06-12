@@ -37,13 +37,16 @@ SocketHandler.prototype.gameDone = function() {
   this.socket.emit('gameDone');
 };
 
+SocketHandler.prototype.sendGrey = function() {
+  this.socket.emit('greyBlock');
+};
+
 SocketHandler.prototype.attachGameListeners = function() {
   this.socket.on('startMatch', function() {
     this.game.startGame(Date.now());
   }.bind(this));
 
   this.socket.on('fadeBlock', function(blockID) {
-    console.log("got a fadeblock :)", blockID);
     this.game.fadeBlock(blockID);
   }.bind(this));
 
@@ -57,7 +60,11 @@ SocketHandler.prototype.attachGameListeners = function() {
     this.game.gameDone(true, false);
   }.bind(this));
 
-}
+  this.socket.on('greyBlock', function() {
+    this.game.addGrey();
+  }.bind(this));
+
+};
 
 module.exports = SocketHandler;
 

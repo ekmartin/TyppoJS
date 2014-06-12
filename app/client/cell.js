@@ -12,7 +12,7 @@ var Cell = function(letter, color, positionOptions) {
   this.origY = positionOptions.origY;
 
   this.locked = !!letter ? false : true;
-  console.log('letter', letter, !!letter, this.locked);
+
   this.faded = false;
 
   this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
@@ -33,19 +33,17 @@ module.exports = Cell;
 
 Cell.prototype.fade = function() {
   this.faded = true;
-  console.log(this.color + 'Faded');
   this.sprite.loadTexture(this.color + 'Faded');
-};
-
-Cell.prototype.unFade = function() {
-  this.faded = false;
-  this.sprite.loadTexture(this.color + 'Tile');
 };
 
 Cell.prototype.removeText = function() {
   // This removes the text for good.
   this.text.destroy();
 };
+
+Cell.prototype.removeSprite = function() {
+  this.sprite.destroy();
+}
 
 Cell.prototype.drop = function(blocked) {
   if (!blocked[this.origY+1][this.origX]) {
@@ -74,9 +72,11 @@ Cell.prototype.up = function() {
 
 Cell.prototype.lock = function() {
   this.locked = true;
-  this.text.destroy();
   if (this.faded) {
-    this.sprite.destroy();
+    this.removeSprite();
+  }
+  else {
+    this.removeText();
   }
 };
 }());

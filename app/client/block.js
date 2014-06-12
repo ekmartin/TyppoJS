@@ -10,6 +10,7 @@ var Cell          = require('./cell'),
 var Block = function(isGrey, blockObject, x, y) {
 
   this.x = x;
+  this.blockObject = blockObject;
   this.cellGroup = game.add.group(game.world, 'cellGroup', false);
   this.cells = [];
   this.isGrey = isGrey;
@@ -21,6 +22,8 @@ var Block = function(isGrey, blockObject, x, y) {
     this.locked = false;
     this.id = blockObject.id;
 
+    this.textGroup = game.add.group();
+
     for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
       var cell = new Cell(this.word[i], this.color, {
         x: this.x+(i*game.tileSize.x),
@@ -29,8 +32,8 @@ var Block = function(isGrey, blockObject, x, y) {
         origY: 0
       });
 
-      this.textGroup = game.add.group();
       this.cellGroup.add(cell.sprite);
+      this.textGroup.add(cell.text);
       this.cells.push(cell);
     }
 
@@ -45,16 +48,16 @@ var Block = function(isGrey, blockObject, x, y) {
     this.color = 'locked';
     this.locked = true;
 
-    for (var i = blockObject.x; i < gameConstants.WIDTH-gameConstants.RIGHT_WALL; i++) {
-      var cell = new Cell('', this.color, {
-        x: this.x+(i*game.tileSize.x),
+    for (var j = blockObject.x; j < gameConstants.WIDTH-gameConstants.RIGHT_WALL; j++) {
+      var greyCell = new Cell('', this.color, {
+        x: this.x+(j*game.tileSize.x),
         y: y,
-        origX: i,
+        origX: j,
         origY: blockObject.y
       });
 
-      this.cellGroup.add(cell.sprite);
-      this.cells.push(cell);
+      this.cellGroup.add(greyCell.sprite);
+      this.cells.push(greyCell);
     }
   }
   else {
@@ -100,7 +103,7 @@ Block.prototype.resetNext = function() {
   };
 };
 
-Block.prototype.giveUp = function(dropCells, blocked) {
+Block.prototype.giveUp = function() {
   this.resetNext();
   this.textGroup.destroy();
   for (var i = this.cells.length-1; i >= 0; i--) {
@@ -122,6 +125,9 @@ Block.prototype.fadeNext = function() {
   var index = this.cells.indexOf(this.next.cell);
   if (index === this.cells.length-1) {
     // no more cells to fade.
+    console.log('calling it now');
+    this.cellGroup.destroy();
+    this.textGroup.destroy();
     this.resetNext();
     return true;
   }
