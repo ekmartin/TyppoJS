@@ -1,5 +1,6 @@
-var fs = require('fs'),
-    _  = require('lodash');
+var fs            = require('fs'),
+    _             = require('lodash'),
+    gameConstants = require('../common/game-constants');
 
 var WordList = function WordList(maxLength) {
   // Should be stored in a database instead.
@@ -20,7 +21,7 @@ WordList.prototype.getWords = function(n) {
     return {
       word: word,
       id: index,
-      x: _.random(1, 13-word.length),
+      x: _.random(gameConstants.LEFT_WALL, gameConstants.WIDTH - gameConstants.RIGHT_WALL - word.length),
       color: _.sample(this.colors, 1)[0]
     };
   }, this);

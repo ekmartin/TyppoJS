@@ -1,8 +1,9 @@
 (function(){
 'use strict';
 
-var _           = require('lodash'),
-    GameStatus  = require('../../common/game-status');
+var _             = require('lodash'),
+    GameStatus    = require('../../common/game-status'),
+    gameConstants = require('../../common/game-constants');
 
 var Game = function() {
   this.gameStatus = null;
@@ -128,15 +129,15 @@ Game.prototype.startCountdown = function(players, wordList) {
   var Typpo = require('../typpo');
 
   this.player1 = new Typpo(true, _.cloneDeep(wordList), {
-    width: 15,
-    height: 20,
+    width: gameConstants.WIDTH,
+    height: gameConstants.HEIGHT,
     positionX: this.tileSize.x,
     positionY: 0
   });
 
   this.player2 = new Typpo(false, _.cloneDeep(wordList), {
-    width: 15,
-    height: 20,
+    width: gameConstants.WIDTH,
+    height: gameConstants.HEIGHT,
     positionX: this.player1.getEndX() + this.tileSize.x,
     positionY: 0
   });

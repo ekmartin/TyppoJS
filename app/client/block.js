@@ -1,29 +1,31 @@
 (function(){
 'use strict';
 
-var Cell  = require('./cell'),
-    game  = require('./states/game').game,
-    _     = require('lodash');
+var Cell          = require('./cell'),
+    game          = require('./states/game').game,
+    _             = require('lodash'),
+    gameConstants = require('../common/game-constants');
 
 
-var Block = function(isGrey, wordObject, x, y) {
+var Block = function(isGrey, blockObject, x, y) {
 
   this.x = x;
   this.cellGroup = game.add.group(game.world, 'cellGroup', false);
   this.cells = [];
+  this.isGrey = isGrey;
 
   if (isGrey === false) {
     // Add a regular block
-    this.word = wordObject.word.toUpperCase();
-    this.color = wordObject.color;
+    this.word = blockObject.word.toUpperCase();
+    this.color = blockObject.color;
     this.locked = false;
-    this.id = wordObject.id;
+    this.id = blockObject.id;
 
     for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
       var cell = new Cell(this.word[i], this.color, {
         x: this.x+(i*game.tileSize.x),
         y: 0,
-        origX: wordObject.x+i,
+        origX: blockObject.x+i,
         origY: 0
       });
 
@@ -38,17 +40,17 @@ var Block = function(isGrey, wordObject, x, y) {
     };
   }
   else if (isGrey === true) {
-    // This means the constructor was called to add a grey row, and wordObject thus
+    // This means the constructor was called to add a grey row, and blockObject thus
     // refers to the width of the game.
     this.color = 'locked';
     this.locked = true;
 
-    for (var i = 0; i < wordObject; i++) {
+    for (var i = blockObject.x; i < gameConstants.WIDTH-gameConstants.RIGHT_WALL; i++) {
       var cell = new Cell('', this.color, {
         x: this.x+(i*game.tileSize.x),
         y: y,
-        origX: wordObject.x+i,
-        origY: wordObject.y
+        origX: i,
+        origY: blockObject.y
       });
 
       this.cellGroup.add(cell.sprite);
@@ -107,6 +109,12 @@ Block.prototype.giveUp = function(dropCells, blocked) {
       this.cells.splice(i, 1);
     }
   }
+};
+
+Block.prototype.up = function() {
+  return _.some(this.cells, function(cell) {
+    return cell.up();
+  });
 };
 
 Block.prototype.fadeNext = function() {

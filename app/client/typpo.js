@@ -1,9 +1,10 @@
 (function(){
 'use strict';
 
-var Block = require('./block'),
-    game  = require('./states/game').game,
-    _     = require('lodash');
+var Block         = require('./block'),
+    game          = require('./states/game').game,
+    _             = require('lodash'),
+    gameConstants = require('../common/game-constants');
 
 function checkMeasures(game, measures) {
   return measures.positionX + measures.width*game.tileSize.x <= game.game.width &&
@@ -27,7 +28,7 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.nextDrop = 0;
 
-    this.walls  = game.add.group(game.world, 'walls', false, true, Phaser.Physics.arcade);
+    this.walls  = game.add.group(game.world, 'walls', false);
     this.background = game.add.group();
     this.blockGroup = game.add.group();
 
@@ -36,7 +37,7 @@ var Typpo = function (isPlayer, wordList, measures) {
     this.dropRate = 750;
 
     this.greyCounter = 0;
-
+    this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
     this.blocks = [];
 
     this.currentBlock = null;
@@ -47,9 +48,6 @@ var Typpo = function (isPlayer, wordList, measures) {
       for (var y = 0; y < this.origHeight; y++) {
         if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
           var wall = this.walls.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'wallTile');
-          wall.body.immovable = true;
-          // TODO: Fix this hacky solution:
-          wall.body.setSize(wall.body.width, wall.body.height+1, 0, -1);
         }
         else {
           this.background.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'bgTile');
@@ -68,11 +66,10 @@ Typpo.prototype.getEndX = function() {
 };
 
 Typpo.prototype.dropTick = function() {
-  console.log('before');
   for(; this.greyCounter > 0; this.greyCounter--) {
     this.addGrey();
   }
-  console.log('after');
+
   this.dropBlocks();
 
   if (this.dropCounter >= this.dropTreshold) {
@@ -87,12 +84,12 @@ Typpo.prototype.dropTick = function() {
 
 Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
-    this.greyCounter++;
     var blocked = this.getBlockedArray();
     var lost = false;
 
     for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
       if (blocked[0][i]) {
+        console.log('kom hit', i, wordObject);
         lost = true;
         // Only care if the player loses, not the one he's spectating.
         if (this.isPlayer) game.gameDone(false, true);
@@ -227,17 +224,31 @@ Typpo.prototype.startGame = function(startTime) {
   this.lastTick = startTime;
 };
 
+Typpo.prototype.upBlocks = function() {
+  var gameOver = _.some(this.blocks, function(block) {
+    if (block.locked && !block.isGrey) {
+      return block.up();
+    }
+    return false;
+  });
+  if (gameOver && this.isPlayer) {
+    game.gameDone(false, true);
+  }
+};
+
 Typpo.prototype.addGrey = function() {
-  var height = this.origHeight - 2;
-  var wordObject = {
-    word: '',
-    x: 0,
-    y: height
+  var blockObject = {
+    x: gameConstants.LEFT_WALL,
+    y: this.greyY
   };
 
-  var block = new Block(true, wordObject, this.x, this.y+(height)*game.tileSize.y);
+  this.upBlocks();
+
+  var block = new Block(true, blockObject, this.x, this.y+(this.greyY*game.tileSize.y));
+
   this.blocks.push(block);
   this.blockGroup.add(block.cellGroup);
+  this.greyY--;
 };
 
 module.exports = Typpo;

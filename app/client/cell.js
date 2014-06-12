@@ -61,7 +61,15 @@ Cell.prototype.drop = function(blocked) {
   else {
     return true;
   }
+};
 
+Cell.prototype.up = function() {
+  this.origY--;
+  this.y -= game.tileSize.y;
+  this.text.y -= game.tileSize.y;
+  this.sprite.y = this.y;
+
+  return this.origY < 0;
 };
 
 Cell.prototype.lock = function() {
