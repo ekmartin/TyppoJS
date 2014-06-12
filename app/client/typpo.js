@@ -35,7 +35,7 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.dropTreshold = 3;
     this.dropCounter = this.dropTreshold;
-    this.dropRate = 800;
+    this.dropRate = 850;
 
     this.greyCounter = 0;
     this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
@@ -88,7 +88,7 @@ Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
 
     if (this.dropRate > 400) {
-      this.dropRate -= 10;
+      this.dropRate -= 7;
     }
 
     var blocked = this.getBlockedArray();
