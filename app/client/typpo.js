@@ -41,6 +41,8 @@ var Typpo = function (isPlayer, wordList, measures) {
     this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
     this.blocks = [];
 
+    this.startTime = Date.now();
+
     this.currentBlock = null;
 
     this.lastTick = null;
@@ -162,6 +164,10 @@ Typpo.prototype.tick = function() {
     // Even Date seems more reliable than Phaser's time when the game loses focus.
     var now = Date.now();
 
+    var totalDelta = now - this.startTime;
+
+    this.dropRate = gameConstants.getDropRate(totalDelta/1000);
+
     if (now > this.nextDrop) {
       var delta = now - this.lastTick;
       var n = ~~(delta/this.dropRate); // Integer division (floored)
@@ -177,7 +183,7 @@ Typpo.prototype.tick = function() {
 
 /*
 
-// Should the already completed letters be removed when the word collides?
+// Shouldn't the already completed letters be removed when the word collides?
 // If so use this.
 Typpo.prototype.cancelCurrentBlock = function() {
   this.currentBlock.cells.forEach(function(cell) {
@@ -187,8 +193,10 @@ Typpo.prototype.cancelCurrentBlock = function() {
 };*/
 
 Typpo.prototype.giveUpCurrentBlock = function() {
-  this.currentBlock.giveUp();
-  this.currentBlock = null;
+  if (this.currentBlock !== null) {
+    this.currentBlock.giveUp();
+    this.currentBlock = null;
+  }
 };
 
 Typpo.prototype.fadeBlock = function(block) {
