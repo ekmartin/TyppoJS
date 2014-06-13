@@ -11,7 +11,7 @@ module.exports = {
     y: 32
   },
   getDropRate: function(totalDelta) {
-    var rate = this.START_RATE - Math.pow(0.3*totalDelta, 2);
+    var rate = this.START_RATE - Math.pow(0.15*totalDelta, 2);
     return rate > this.MIN_RATE ? rate : this.MIN_RATE;
   }
 };;

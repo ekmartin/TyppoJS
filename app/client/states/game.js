@@ -2,6 +2,7 @@
 'use strict';
 
 var _             = require('lodash'),
+    Typpo         = require('../typpo'),
     GameStatus    = require('../../common/game-status'),
     gameConstants = require('../../common/game-constants');
 
@@ -119,8 +120,6 @@ Game.prototype.update = function() {
 Game.prototype.startCountdown = function(players, wordList) {
   this.findingText.destroy();
   this.loader.destroy();
-
-  var Typpo = require('../typpo');
 
   this.player1 = new Typpo(this, true, true, _.cloneDeep(wordList), {
     width: gameConstants.WIDTH,

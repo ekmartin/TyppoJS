@@ -30,8 +30,9 @@ var Cell = function(game, render, letter, color, positionOptions) {
     });
 
     this.text.anchor.setTo(0.5);
+
+    this.text.font = 'Droid Sans Mono';
   }
-  this.text.font = 'Droid Sans Mono';
 
 };
 

@@ -5,64 +5,57 @@ var Block         = require('./block'),
     _             = require('lodash'),
     gameConstants = require('../common/game-constants');
 
-function checkMeasures(game, measures) {
-  return measures.positionX + measures.width*gameConstants.TILE_SIZE.x <= game.game.width &&
-    measures.positionY + measures.height*gameConstants.TILE_SIZE.y <= game.game.height;
-}
 
-var Typpo = function (game, render, isPlayer, wordList, measures) {
-  if (checkMeasures(game, measures)) {
+var Typpo = function (game, render, isPlayer, wordList, measures, playerID) {
+  if (playerID) {
+    this.playerID = playerID;
+  }
 
-    this.game = game;
+  this.game = game;
 
-    this.isPlayer = isPlayer;
-    this.render = render;
+  this.isPlayer = isPlayer;
+  this.render = render;
 
-    this.isDone = false;
+  this.isDone = false;
 
-    this.origWidth = measures.width;
-    this.origHeight = measures.height;
-    this.width = this.origWidth*gameConstants.TILE_SIZE.x;
-    this.height = this.origHeight*gameConstants.TILE_SIZE.y;
-    this.x = measures.positionX;
-    this.y = measures.positionY;
+  this.origWidth = measures.width;
+  this.origHeight = measures.height;
+  this.width = this.origWidth*gameConstants.TILE_SIZE.x;
+  this.height = this.origHeight*gameConstants.TILE_SIZE.y;
+  this.x = measures.positionX;
+  this.y = measures.positionY;
 
-    this.wordList = wordList;
-    this.wordIndex = 0;
+  this.wordList = wordList;
+  this.wordIndex = 0;
 
-    this.nextDrop = 0;
+  this.nextDrop = 0;
 
-    this.dropTreshold = 3;
-    this.dropCounter = this.dropTreshold;
-    this.dropRate = 850;
+  this.dropTreshold = 3;
+  this.dropCounter = this.dropTreshold;
 
-    this.greyCounter = 0;
-    this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
-    this.blocks = [];
+  this.greyCounter = 0;
+  this.greyY = this.origHeight - gameConstants.BOTTOM_WALL -1;
+  this.blocks = [];
 
-    this.startTime = Date.now();
+  this.startTime = Date.now();
 
-    this.currentBlock = null;
+  this.currentBlock = null;
 
-    this.lastTick = null;
+  this.lastTick = null;
 
-    if (this.render) {
-      this.walls  = this.game.add.group(this.game.world, 'walls', false);
+  if (this.render) {
+    this.walls  = this.game.add.group(this.game.world, 'walls', false);
 
-      for (var x = 0; x < this.origWidth; x++) {
-        for (var y = 0; y < this.origHeight; y++) {
-          if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
-            var wall = this.walls.create(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'wallTile');
-          }
-          else {
-            this.game.add.sprite(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'bgTile');
-          }
+    for (var x = 0; x < this.origWidth; x++) {
+      for (var y = 0; y < this.origHeight; y++) {
+        if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
+          var wall = this.walls.create(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'wallTile');
+        }
+        else {
+          this.game.add.sprite(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'bgTile');
         }
       }
     }
-  }
-  else {
-    throw new Error('Typpo goes outside the game width.');
   }
 };
 
@@ -72,6 +65,7 @@ Typpo.prototype.getEndX = function() {
 };
 
 Typpo.prototype.dropTick = function() {
+  console.log('dropping blocks');
   // Temporarily linear
   for(; this.greyCounter > 0; this.greyCounter--) {
     this.addGrey();
@@ -97,7 +91,7 @@ Typpo.prototype.addBlock = function(wordObject) {
       if (blocked[0][i]) {
         this.isDone = true;
         // Only care if the player loses, not the one he's spectating.
-        if (this.isPlayer) this.game.gameDone(false, true);
+        if (this.isPlayer) this.game.gameDone(false, true, this.playerID);
         break;
       }
     }
@@ -162,7 +156,7 @@ Typpo.prototype.tick = function() {
 
     var totalDelta = now - this.startTime;
 
-    this.dropRate = 100;
+    this.dropRate = gameConstants.getDropRate(totalDelta);
 
     if (now > this.nextDrop) {
       var delta = now - this.lastTick;
@@ -241,7 +235,7 @@ Typpo.prototype.upBlocks = function() {
     return false;
   });
   if (gameOver && this.isPlayer) {
-    this.game.gameDone(false, true);
+    this.game.gameDone(false, true, this.playerID);
   }
 };
 

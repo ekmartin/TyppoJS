@@ -54,7 +54,7 @@ var Block = function(game, render, isGrey, blockObject, x, y) {
     this.locked = true;
 
     for (var j = blockObject.x; j < gameConstants.WIDTH-gameConstants.RIGHT_WALL; j++) {
-      var greyCell = new Cell('', this.color, {
+      var greyCell = new Cell(game, this.render, '', this.color, {
         x: this.x+(j*gameConstants.TILE_SIZE.x),
         y: y,
         origX: j,

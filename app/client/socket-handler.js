@@ -1,6 +1,8 @@
 (function(){
 'use strict';
 
+var GameStatus = require('../common/game-status');
+
 var SocketHandler = function(socket, nickname) {
   this.socket = socket;
   this.nickname = null;
@@ -52,12 +54,21 @@ SocketHandler.prototype.attachGameListeners = function() {
 
   this.socket.on('opponentLeft', function() {
     console.log('opponent left.', this);
-    this.game.gameDone(true);
+    this.game.gameDone(true, false);
   }.bind(this));
 
   this.socket.on('gameDone', function(emitStatus) {
-    console.log('game done..');
-    this.game.gameDone(true, false);
+    console.log('game done..', emitStatus);
+    switch(emitStatus) {
+      case GameStatus.LOST:
+        this.game.gameDone(false, false);
+        break;
+      case GameStatus.WON:
+        this.game.gameDone(true, false);
+        break;
+      default:
+        throw new Error('gameStatus needs to be won/lost, not ' + gameStatus);
+    }
   }.bind(this));
 
   this.socket.on('greyBlock', function() {
