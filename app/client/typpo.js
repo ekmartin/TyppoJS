@@ -65,8 +65,6 @@ Typpo.prototype.getEndX = function() {
 };
 
 Typpo.prototype.dropTick = function() {
-  console.log('dropping blocks');
-  // Temporarily linear
   for(; this.greyCounter > 0; this.greyCounter--) {
     this.addGrey();
   }
@@ -156,10 +154,11 @@ Typpo.prototype.tick = function() {
 
     var totalDelta = now - this.startTime;
 
-    this.dropRate = gameConstants.getDropRate(totalDelta);
-
     if (now > this.nextDrop) {
       var delta = now - this.lastTick;
+
+      this.dropRate = gameConstants.getDropRate(totalDelta/1000);
+
       var n = ~~(delta/this.dropRate); // Integer division (floored)
 
       for (var i = 0; i < n; i++) {
