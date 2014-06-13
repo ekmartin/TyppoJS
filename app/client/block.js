@@ -2,19 +2,20 @@
 'use strict';
 
 var Cell          = require('./cell'),
-    game          = require('./states/game').game,
     _             = require('lodash'),
     gameConstants = require('../common/game-constants');
 
 
-var Block = function(isGrey, blockObject, x, y) {
+var Block = function(game, render, isGrey, blockObject, x, y) {
 
   this.x = x;
   this.blockObject = blockObject;
-  this.cellGroup = game.add.group(game.world, 'cellGroup', false);
   this.cells = [];
   this.isGrey = isGrey;
   this.givenUp = false;
+  this.render = render;
+
+  if (this.render) this.cellGroup = game.add.group(game.world, 'cellGroup', false);
 
   if (isGrey === false) {
     // Add a regular block
@@ -23,18 +24,21 @@ var Block = function(isGrey, blockObject, x, y) {
     this.locked = false;
     this.id = blockObject.id;
 
-    this.textGroup = game.add.group();
+    if (this.render) this.textGroup = game.add.group();
 
     for (var i = 0, wordLength = this.word.length; i < wordLength; i++) {
-      var cell = new Cell(this.word[i], this.color, {
-        x: this.x+(i*game.tileSize.x),
-        y: 0,
+      var cell = new Cell(game, this.render, this.word[i], this.color, {
+        x: this.x+(i*gameConstants.TILE_SIZE.x),
+        y: y,
         origX: blockObject.x+i,
         origY: 0
       });
 
-      this.cellGroup.add(cell.sprite);
-      this.textGroup.add(cell.text);
+      if (this.render) {
+        this.cellGroup.add(cell.sprite);
+        this.textGroup.add(cell.text);
+      }
+
       this.cells.push(cell);
     }
 
@@ -51,13 +55,14 @@ var Block = function(isGrey, blockObject, x, y) {
 
     for (var j = blockObject.x; j < gameConstants.WIDTH-gameConstants.RIGHT_WALL; j++) {
       var greyCell = new Cell('', this.color, {
-        x: this.x+(j*game.tileSize.x),
+        x: this.x+(j*gameConstants.TILE_SIZE.x),
         y: y,
         origX: j,
         origY: blockObject.y
       });
 
-      this.cellGroup.add(greyCell.sprite);
+      if (this.render) this.cellGroup.add(greyCell.sprite);
+
       this.cells.push(greyCell);
     }
   }
@@ -82,8 +87,10 @@ Block.prototype.drop = function(blocked) {
       for (var i = this.cells.length-1; i >= 0; i--) {
         this.cells[i].lock();
         this.cells[i].drop(blocked);
-        if (this.cells[i].sprite.game === null) {
-          this.cells.splice(i, 1);
+        if (this.render) {
+          if (this.cells[i].sprite.game === null) {
+            this.cells.splice(i, 1);
+          }
         }
       }
       return true;
@@ -128,9 +135,12 @@ Block.prototype.fadeNext = function() {
   var index = this.cells.indexOf(this.next.cell);
   if (index === this.cells.length-1) {
     // no more cells to fade.
-    console.log('calling it now');
-    this.cellGroup.destroy();
-    this.textGroup.destroy();
+
+    if (this.render) {
+      this.cellGroup.destroy();
+      this.textGroup.destroy();
+    }
+
     this.resetNext();
     return true;
   }

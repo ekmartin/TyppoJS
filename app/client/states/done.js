@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 
-var Done = function() {},
+var Done        = function() {},
     GameStatus  = require('../../common/game-status');
 
 module.exports = Done;
@@ -22,9 +22,9 @@ Done.prototype = {
       align: 'center'
     });
 
-    var game = require('./game').game;
+    var gameStatus = require('./game').gameStatus;
 
-    switch (game.gameStatus) {
+    switch (gameStatus) {
       case GameStatus.WON:
         this.doneText.setText(GameStatus.WON);
         this.doneText.x = this.world.width/2 - this.doneText.width/2;

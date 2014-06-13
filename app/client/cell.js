@@ -1,9 +1,11 @@
 (function(){
 'use strict';
 
-var game  = require('./states/game').game;
+var gameConstants = require('../common/game-constants');
 
-var Cell = function(letter, color, positionOptions) {
+var Cell = function(game, render, letter, color, positionOptions) {
+  this.game = game;
+
   this.letter = letter;
   this.color = color;
   this.x = positionOptions.x;
@@ -16,16 +18,19 @@ var Cell = function(letter, color, positionOptions) {
 
   this.faded = false;
 
-  this.sprite = game.add.sprite(this.x, this.y, this.color + 'Tile');
+  this.render = render;
 
-  this.text = game.add.text(this.x+game.tileSize.x/2,
-    this.y+game.tileSize.y/2, this.letter, {
-    fill: '#fff',
-    align: 'center'
-  });
+  if (this.render) {
+    this.sprite = this.game.add.sprite(this.x, this.y, this.color + 'Tile');
 
-  this.text.anchor.setTo(0.5);
+    this.text = this.game.add.text(this.x+gameConstants.TILE_SIZE.x/2,
+      this.y+gameConstants.TILE_SIZE.y/2, this.letter, {
+      fill: '#fff',
+      align: 'center'
+    });
 
+    this.text.anchor.setTo(0.5);
+  }
   this.text.font = 'Droid Sans Mono';
 
 };
@@ -34,24 +39,26 @@ module.exports = Cell;
 
 Cell.prototype.fade = function() {
   this.faded = true;
-  this.sprite.loadTexture(this.color + 'Faded');
+  if (this.render) this.sprite.loadTexture(this.color + 'Faded');
 };
 
 Cell.prototype.removeText = function() {
   // This removes the text for good.
-  this.text.destroy();
+  if (this.render) this.text.destroy();
 };
 
 Cell.prototype.removeSprite = function() {
-  this.sprite.destroy();
+  if (this.render) this.sprite.destroy();
 }
 
 Cell.prototype.drop = function(blocked) {
   if (!blocked[this.origY+1][this.origX]) {
-    this.y += game.tileSize.y;
-    this.text.y += game.tileSize.y;
-    this.sprite.y = this.y;
+    this.y += gameConstants.TILE_SIZE.y;
     this.origY++;
+    if (this.render) {
+      this.text.y += gameConstants.TILE_SIZE.y;
+      this.sprite.y = this.y;
+    }
 
     if (this.locked) {
       this.drop(blocked);
@@ -63,10 +70,13 @@ Cell.prototype.drop = function(blocked) {
 };
 
 Cell.prototype.up = function() {
+  this.y -= gameConstants.TILE_SIZE.y;
   this.origY--;
-  this.y -= game.tileSize.y;
-  this.text.y -= game.tileSize.y;
-  this.sprite.y = this.y;
+
+  if (this.render) {
+    this.text.y -= gameConstants.TILE_SIZE.y;
+    this.sprite.y = this.y;
+  }
 
   return this.origY < 0;
 };

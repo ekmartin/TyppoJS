@@ -2,25 +2,28 @@
 'use strict';
 
 var Block         = require('./block'),
-    game          = require('./states/game').game,
     _             = require('lodash'),
     gameConstants = require('../common/game-constants');
 
 function checkMeasures(game, measures) {
-  return measures.positionX + measures.width*game.tileSize.x <= game.game.width &&
-    measures.positionY + measures.height*game.tileSize.y <= game.game.height;
+  return measures.positionX + measures.width*gameConstants.TILE_SIZE.x <= game.game.width &&
+    measures.positionY + measures.height*gameConstants.TILE_SIZE.y <= game.game.height;
 }
 
-var Typpo = function (isPlayer, wordList, measures) {
+var Typpo = function (game, render, isPlayer, wordList, measures) {
   if (checkMeasures(game, measures)) {
 
+    this.game = game;
+
     this.isPlayer = isPlayer;
+    this.render = render;
+
     this.isDone = false;
 
     this.origWidth = measures.width;
     this.origHeight = measures.height;
-    this.width = this.origWidth*game.tileSize.x;
-    this.height = this.origHeight*game.tileSize.y;
+    this.width = this.origWidth*gameConstants.TILE_SIZE.x;
+    this.height = this.origHeight*gameConstants.TILE_SIZE.y;
     this.x = measures.positionX;
     this.y = measures.positionY;
 
@@ -28,10 +31,6 @@ var Typpo = function (isPlayer, wordList, measures) {
     this.wordIndex = 0;
 
     this.nextDrop = 0;
-
-    this.walls  = game.add.group(game.world, 'walls', false);
-    this.background = game.add.group();
-    this.blockGroup = game.add.group();
 
     this.dropTreshold = 3;
     this.dropCounter = this.dropTreshold;
@@ -47,13 +46,17 @@ var Typpo = function (isPlayer, wordList, measures) {
 
     this.lastTick = null;
 
-    for (var x = 0; x < this.origWidth; x++) {
-      for (var y = 0; y < this.origHeight; y++) {
-        if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
-          var wall = this.walls.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'wallTile');
-        }
-        else {
-          this.background.create(x*game.tileSize.x + this.x, y*game.tileSize.y + this.y, 'bgTile');
+    if (this.render) {
+      this.walls  = this.game.add.group(this.game.world, 'walls', false);
+
+      for (var x = 0; x < this.origWidth; x++) {
+        for (var y = 0; y < this.origHeight; y++) {
+          if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
+            var wall = this.walls.create(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'wallTile');
+          }
+          else {
+            this.game.add.sprite(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'bgTile');
+          }
         }
       }
     }
@@ -88,27 +91,20 @@ Typpo.prototype.dropTick = function() {
 
 Typpo.prototype.addBlock = function(wordObject) {
   if (wordObject.word !== undefined) {
-
-    if (this.dropRate > 400) {
-      this.dropRate -= 7;
-    }
-
     var blocked = this.getBlockedArray();
 
     for (var i = wordObject.x, l = wordObject.word.length; i < l; i++) {
       if (blocked[0][i]) {
         this.isDone = true;
         // Only care if the player loses, not the one he's spectating.
-        if (this.isPlayer) game.gameDone(false, true);
+        if (this.isPlayer) this.game.gameDone(false, true);
         break;
       }
     }
     if (!this.isDone) {
-      var x = game.tileSize.x*wordObject.x + this.x;
-      var block = new Block(false, wordObject, x);
+      var x = gameConstants.TILE_SIZE.x*wordObject.x + this.x;
+      var block = new Block(this.game, this.render, false, wordObject, x, 0);
       this.blocks.push(block);
-
-      this.blockGroup.add(block.cellGroup);
     }
   }
   else {
@@ -166,7 +162,7 @@ Typpo.prototype.tick = function() {
 
     var totalDelta = now - this.startTime;
 
-    this.dropRate = gameConstants.getDropRate(totalDelta/1000);
+    this.dropRate = 100;
 
     if (now > this.nextDrop) {
       var delta = now - this.lastTick;
@@ -221,9 +217,9 @@ Typpo.prototype.fadeBlock = function(block) {
 };
 
 Typpo.prototype.emitEvent = function(event, data) {
-  if (this.isPlayer) {
+  if (this.isPlayer && this.render) {
     console.log("Emitting", event, data);
-    var socket = game.game.socketHandler.socket;
+    var socket = this.game.game.socketHandler.socket;
     if (data !== undefined) {
       socket.emit(event, data);
     }
@@ -245,7 +241,7 @@ Typpo.prototype.upBlocks = function() {
     return false;
   });
   if (gameOver && this.isPlayer) {
-    game.gameDone(false, true);
+    this.game.gameDone(false, true);
   }
 };
 
@@ -257,10 +253,9 @@ Typpo.prototype.addGrey = function() {
 
   this.upBlocks();
 
-  var block = new Block(true, blockObject, this.x, this.y+(this.greyY*game.tileSize.y));
+  var block = new Block(this.game, this.render, true, blockObject, this.x, this.y+(this.greyY*gameConstants.TILE_SIZE.y));
 
   this.blocks.push(block);
-  this.blockGroup.add(block.cellGroup);
   this.greyY--;
 };
 

@@ -5,6 +5,7 @@ var _             = require('lodash'),
     GameStatus    = require('../../common/game-status'),
     gameConstants = require('../../common/game-constants');
 
+
 var Game = function() {
   this.countdownText = null;
   this.findingOppoentText = null;
@@ -20,10 +21,7 @@ var Game = function() {
   this.countdown = 3;
   this.lagBlocks = [];
 
-  this.tileSize = {
-    x: 32,
-    y: 32
-  };
+  exports.gameStatus = this.gameStatus;
 };
 
 Game.prototype.create = function() {
@@ -119,25 +117,22 @@ Game.prototype.update = function() {
 };
 
 Game.prototype.startCountdown = function(players, wordList) {
-  // :(
-  exports.game = this;
-
   this.findingText.destroy();
   this.loader.destroy();
 
   var Typpo = require('../typpo');
 
-  this.player1 = new Typpo(true, _.cloneDeep(wordList), {
+  this.player1 = new Typpo(this, true, true, _.cloneDeep(wordList), {
     width: gameConstants.WIDTH,
     height: gameConstants.HEIGHT,
-    positionX: this.tileSize.x,
+    positionX: gameConstants.TILE_SIZE.x,
     positionY: 0
   });
 
-  this.player2 = new Typpo(false, _.cloneDeep(wordList), {
+  this.player2 = new Typpo(this, true, false, _.cloneDeep(wordList), {
     width: gameConstants.WIDTH,
     height: gameConstants.HEIGHT,
-    positionX: this.player1.getEndX() + this.tileSize.x,
+    positionX: this.player1.getEndX() + gameConstants.TILE_SIZE.x,
     positionY: 0
   });
 
@@ -219,6 +214,7 @@ Game.prototype.gameDone = function(gameWon, emit) {
     this.game.socketHandler.gameDone();
   }
 
+  exports.gameStatus = this.gameStatus;
   this.game.state.start('Done');
 };
 
