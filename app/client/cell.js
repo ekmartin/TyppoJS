@@ -12,6 +12,7 @@ var Cell = function(letter, color, positionOptions) {
   this.origY = positionOptions.origY;
 
   this.locked = !!letter ? false : true;
+  this.givenUp = false;
 
   this.faded = false;
 
@@ -68,6 +69,15 @@ Cell.prototype.up = function() {
   this.sprite.y = this.y;
 
   return this.origY < 0;
+};
+
+Cell.prototype.giveUp = function() {
+  console.log('giving up cell');
+  this.givenUp = true;
+  this.removeText();
+  if (this.faded) {
+    this.removeSprite();
+  }
 };
 
 Cell.prototype.lock = function() {

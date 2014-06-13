@@ -14,6 +14,7 @@ var Block = function(isGrey, blockObject, x, y) {
   this.cellGroup = game.add.group(game.world, 'cellGroup', false);
   this.cells = [];
   this.isGrey = isGrey;
+  this.givenUp = false;
 
   if (isGrey === false) {
     // Add a regular block
@@ -103,12 +104,14 @@ Block.prototype.resetNext = function() {
   };
 };
 
-Block.prototype.giveUp = function() {
+Block.prototype.giveUp = function(blocked) {
+  this.givenUp = true;
+
   this.resetNext();
-  this.textGroup.destroy();
+
   for (var i = this.cells.length-1; i >= 0; i--) {
+    this.cells[i].giveUp();
     if (this.cells[i].faded) {
-      this.cells[i].sprite.destroy();
       this.cells.splice(i, 1);
     }
   }
