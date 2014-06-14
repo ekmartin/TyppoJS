@@ -3,8 +3,12 @@
 
 var game = new Phaser.Game(1056, 700, Phaser.AUTO, 'game-container');
 
-// Connect to the socket.io server and add the connection to the current game for future reference:
-game.state.game.socket = io.connect();
+// Connect to the socket.io server and add the connection to the current game for future reference.
+// First argument is connection url, if we set it to null socket.io will determine it.
+game.state.game.socket = io(null, {
+  reconnectionDelay: 200,
+  reconnectionDelayMax: 200
+});
 
 game.state.add('Boot', require('./states/boot'));
 game.state.add('Preloader', require('./states/preloader'));
