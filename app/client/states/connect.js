@@ -18,26 +18,26 @@ Connect.prototype = {
 
 
     var connectingText = this.game.add.sprite(
-      this.world.width/2-connectingWidth/2,
-      this.world.height/2-connectingHeight/2-150,
+      this.world.centerX,
+      this.world.centerY-150,
       'connectingText'
     );
-    connectingText.smoothed = false;
+    connectingText.anchor.setTo(0.5, 0.5);
 
     var loader = this.game.add.sprite(
-      this.world.width/2-loadingWidth/2,
-      this.world.height/2-loadingHeight/2,
+      this.world.centerX,
+      this.world.centerY,
       'loadingAnimation'
     );
+    loader.anchor.setTo(0.5, 0.5);
+
     loader.animations.add('loop');
     loader.animations.play('loop', 15, true);
-
-    this.game.socketHandler = new SocketHandler(this.game.socket, 'temp' + this.rnd.integerInRange(0, 9999));
   },
 
   update: function() {
     if (this.game.socketHandler.connected && this.game.socketHandler.nickname !== null) {
-      this.game.state.start('Game');
+      this.game.state.start('Menu');
     }
   }
 };

@@ -10,14 +10,13 @@ Preloader.prototype = {
 
     // Menu:
     this.load.image('logo', '/assets/img/logo.png');
+    this.load.spritesheet('startButton', '/assets/img/startButton.png', 343, 65);
     this.load.spritesheet('findGame', '/assets/img/findGame.png', 594, 112);
     this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
     this.load.spritesheet('menuButton', '/assets/img/menuButton.png', 297, 112);
 
     // Connect:
     this.load.image('connectingText', '/assets/img/connectingText.png');
-    this.load.spritesheet('loadingAnimation', '/assets/img/loadingAnimation.png', 120, 128);
-
     // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');
     this.load.image('lockedTile','/assets/img/lockedTile.png');
@@ -38,7 +37,7 @@ Preloader.prototype = {
   },
 
   create: function() {
-    this.game.state.start('Menu');
+    this.game.state.start('SetNick');
   }
 };
 

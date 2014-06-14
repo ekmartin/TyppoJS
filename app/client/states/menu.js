@@ -18,7 +18,7 @@ Menu.prototype = {
   },
 
   findGame: function() {
-    this.game.state.start('Connect');
+    this.game.state.start('Game');
   },
 
 };

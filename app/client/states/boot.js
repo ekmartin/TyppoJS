@@ -7,7 +7,7 @@ module.exports = Boot;
 
 Boot.prototype = {
   preload: function() {
-    // Load everything needed for the preloader state.
+    this.load.spritesheet('loadingAnimation', '/assets/img/loadingAnimation.png', 120, 128);
   },
 
   create: function() {
