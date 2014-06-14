@@ -31,8 +31,8 @@ Game.prototype.create = function() {
   this.game.stage.backgroundColor = '#C8F7C5';
 
   this.countdownText = this.add.text(
-    this.world.centerX, // Temporary X (will be set)
-    this.world.centerY, // Temporary Y (will be set)
+    this.world.centerX,
+    this.world.centerY,
     '', // Text
     { // style
       font: '90pt hallo_sansblack',
@@ -45,8 +45,8 @@ Game.prototype.create = function() {
   this.findingText = this.add.text(
     this.world.centerX,
     this.world.centerY - 150,
-    'Finding opponent', // Text
-    { // style
+    'Finding opponent',
+    {
       font: '45pt hallo_sansblack',
       fill: '#e67e22',
       align: 'center'
@@ -54,6 +54,17 @@ Game.prototype.create = function() {
   );
   this.findingText.x = this.world.width/2 - this.findingText.width/2;
 
+  this.hintText = this.add.text(
+    this.world.centerX,
+    this.world.centerY+250,
+    'Hint: Write the words \non the falling blocks!',
+    {
+      font: '30pt hallo_sansblack',
+      fill: '#e67e22',
+      align: 'center'
+    }
+  );
+  this.hintText.anchor.setTo(0.5, 0.5);
   this.loader = this.game.add.sprite(
     this.world.centerX,
     this.world.centerY + 75,
@@ -113,6 +124,7 @@ Game.prototype.update = function() {
 };
 
 Game.prototype.startCountdown = function(players, wordList) {
+  this.hintText.destroy();
   this.findingText.destroy();
   this.loader.destroy();
 
