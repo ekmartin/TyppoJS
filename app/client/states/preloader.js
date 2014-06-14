@@ -8,7 +8,7 @@ module.exports = Preloader;
 Preloader.prototype = {
   preload: function() {
 
-    this.game.stage.backgroundColor = '#1abc9c';
+    this.game.stage.backgroundColor = '#C8F7C5';
 
     this.hintText = this.add.text(
       this.world.centerX,

@@ -7,7 +7,7 @@ module.exports = Boot;
 
 Boot.prototype = {
   preload: function() {
-    this.game.stage.backgroundColor = '#1abc9c';
+    this.game.stage.backgroundColor = '#C8F7C5';
 
     this.load.spritesheet('loadingAnimation', '/assets/img/loadingAnimation.png', 120, 128);
   },

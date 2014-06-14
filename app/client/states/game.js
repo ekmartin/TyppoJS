@@ -65,6 +65,7 @@ Game.prototype.create = function() {
     }
   );
   this.hintText.anchor.setTo(0.5, 0.5);
+
   this.loader = this.game.add.sprite(
     this.world.centerX,
     this.world.centerY + 75,
@@ -128,6 +129,7 @@ Game.prototype.startCountdown = function(players, wordList) {
   this.findingText.destroy();
   this.loader.destroy();
 
+  console.log('her', players);
   this.player1 = new Typpo(this, true, true, _.cloneDeep(wordList), {
     width: gameConstants.WIDTH,
     height: gameConstants.HEIGHT,
@@ -141,6 +143,30 @@ Game.prototype.startCountdown = function(players, wordList) {
     positionX: this.player1.getEndX() + gameConstants.TILE_SIZE.x,
     positionY: 0
   });
+
+  var player1Text = this.add.text(
+    this.player1.x + this.player1.width/2,
+    this.player1.y + this.player1.height + 25,
+    players[0], // Text
+    { // style
+      font: '25pt hallo_sansblack',
+      fill: '#e67e22',
+      align: 'center'
+    }
+  );
+  player1Text.anchor.setTo(0.5, 0.5);
+
+  var player2Text = this.add.text(
+    this.player2.x + this.player2.width/2,
+    this.player2.y + this.player2.height + 25,
+    players[1], // Text
+    { // style
+      font: '25pt hallo_sansblack',
+      fill: '#e67e22',
+      align: 'center'
+    }
+  );
+  player2Text.anchor.setTo(0.5, 0.5);
 
   this.startCountDown = true;
 };
