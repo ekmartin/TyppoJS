@@ -8,7 +8,7 @@ module.exports = Connect;
 
 Connect.prototype = {
   create: function() {
-    this.game.stage.backgroundColor = '#C8F7C5';
+    this.game.stage.backgroundColor = '#1abc9c';
 
     // Hack/magic numbers.. Should make it into a webfont and use it like that instead.
     var connectingWidth = 307;
@@ -16,13 +16,18 @@ Connect.prototype = {
     var loadingWidth = 120;
     var loadingHeight = 128;
 
-
-    var connectingText = this.game.add.sprite(
+    this.connectingText = this.add.text(
       this.world.centerX,
       this.world.centerY-150,
-      'connectingText'
+      'Connecting!',
+      {
+       font: '45pt hallo_sansblack',
+        fill: '#e67e22',
+        align: 'center'
+      }
     );
-    connectingText.anchor.setTo(0.5, 0.5);
+    this.connectingText.anchor.setTo(0.5, 0.5);
+
 
     var loader = this.game.add.sprite(
       this.world.centerX,
@@ -33,6 +38,8 @@ Connect.prototype = {
 
     loader.animations.add('loop');
     loader.animations.play('loop', 15, true);
+
+    this.game.socketHandler = new SocketHandler(this.game.socket, this.game.nickname);
   },
 
   update: function() {

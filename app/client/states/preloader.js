@@ -8,6 +8,29 @@ module.exports = Preloader;
 Preloader.prototype = {
   preload: function() {
 
+    this.game.stage.backgroundColor = '#1abc9c';
+
+    this.hintText = this.add.text(
+      this.world.centerX,
+      this.world.centerY-150,
+      'Loading!',
+      {
+       font: '45pt hallo_sansblack',
+        fill: '#e67e22',
+        align: 'center'
+      }
+    );
+    this.hintText.anchor.setTo(0.5, 0.5);
+
+    this.loader = this.game.add.sprite(
+      this.world.centerX,
+      this.world.centerY + 75,
+      'loadingAnimation'
+    );
+    this.loader.anchor.setTo(0.5, 0.5);
+    this.loader.animations.add('loop');
+    this.loader.animations.play('loop', 15, true);
+
     // Menu:
     this.load.image('logo', '/assets/img/logo.png');
     this.load.spritesheet('startButton', '/assets/img/startButton.png', 343, 65);
@@ -15,8 +38,6 @@ Preloader.prototype = {
     this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
     this.load.spritesheet('menuButton', '/assets/img/menuButton.png', 297, 112);
 
-    // Connect:
-    this.load.image('connectingText', '/assets/img/connectingText.png');
     // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');
     this.load.image('lockedTile','/assets/img/lockedTile.png');

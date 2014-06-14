@@ -49,7 +49,7 @@ SetNick.prototype = {
   registerInput: function() {
     var nick = this.nickInput.value;
     if (nick.length && nick.length < 15) {
-      this.game.socketHandler = new SocketHandler(this.game.socket, nick);
+      this.game.nickname = nick;
       this.nickInput.style.display = 'none';
       this.game.state.start('Connect');
     }
