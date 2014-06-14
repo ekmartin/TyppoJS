@@ -71,3 +71,24 @@
 #nick-input:focus {
     outline: none;
 }
+
+#hallo-black {
+    opacity: 0;
+    font-family: 'hallo_sansblack';
+}
+
+#droid {
+    opacity: 0;
+    font-family: 'Droid Sans Mono';
+}
+
+#clear-bold {
+    opacity: 0;
+    font-family: 'clear_sansbold';
+}
+
+#hallo-regular {
+    opacity: 0;
+    font-family: 'hallo_sansregular';
+}
+
