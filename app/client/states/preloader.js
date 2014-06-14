@@ -8,7 +8,7 @@ module.exports = Preloader;
 Preloader.prototype = {
   preload: function() {
 
-    this.game.stage.backgroundColor = '#C8F7C5';
+    this.game.stage.backgroundColor = '#1abc9c';
 
     this.hintText = this.add.text(
       this.world.centerX,
@@ -25,7 +25,7 @@ Preloader.prototype = {
     this.loader = this.game.add.sprite(
       this.world.centerX,
       this.world.centerY + 75,
-      'loadingAnimation'
+      'lightLoadingAnimation'
     );
     this.loader.anchor.setTo(0.5, 0.5);
     this.loader.animations.add('loop');
