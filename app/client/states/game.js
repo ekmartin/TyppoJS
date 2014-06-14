@@ -8,8 +8,8 @@ var _             = require('lodash'),
 
 
 var Game = function() {
+  this.findingText = null;
   this.countdownText = null;
-  this.findingOppoentText = null;
   this.lastCount = null;
   this.lagBlocks = null;
 
@@ -31,8 +31,8 @@ Game.prototype.create = function() {
   this.game.stage.backgroundColor = '#C8F7C5';
 
   this.countdownText = this.add.text(
-    -999, // Temporary X (will be set)
-    -999, // Temporary Y (will be set)
+    this.world.centerX, // Temporary X (will be set)
+    this.world.centerY, // Temporary Y (will be set)
     '', // Text
     { // style
       font: '90pt hallo_sansblack',
@@ -40,10 +40,11 @@ Game.prototype.create = function() {
       align: 'center'
     }
   );
+  this.countdownText.anchor.setTo(0.5, 0.5);
 
   this.findingText = this.add.text(
-    -999, // Temporary X (will be set)
-    -999, // Temporary Y (will be set)
+    this.world.centerX,
+    this.world.centerY - 150,
     'Finding opponent', // Text
     { // style
       font: '45pt hallo_sansblack',
@@ -51,19 +52,14 @@ Game.prototype.create = function() {
       align: 'center'
     }
   );
-
-  this.centerEntity(this.findingText, true, false);
-  this.findingText.y = this.world.height/2 - 150;
-
-  this.centerEntity(this.countdownText, true, true);
+  this.findingText.x = this.world.width/2 - this.findingText.width/2;
 
   this.loader = this.game.add.sprite(
-    -999,
-    this.world.height/2 + 75,
+    this.world.centerX,
+    this.world.centerY + 75,
     'loadingAnimation'
   );
-
-  this.centerEntity(this.loader, true, false);
+  this.loader.anchor.setTo(0.5, 0.5);
 
   this.loader.animations.add('loop');
   this.loader.animations.play('loop', 15, true);
@@ -79,7 +75,6 @@ Game.prototype.update = function() {
     if (this.gameStatus === GameStatus.NOTLIVE) {
       this.countdownText.setText(String(this.countdown));
       this.countdownText.parent.bringToTop(this.countdownText);
-      this.centerEntity(this.countdownText, true, true);
 
       if (this.countdown > 0) {
         if (this.time.elapsedSecondsSince(this.lastCount) > 1) {

@@ -33,6 +33,7 @@ SetNick.prototype = {
     this.nickInput.style.top = this.world.centerY;
     this.nickInput.style.left = (this.world.width/2 - width/2) + 'px';
     this.nickInput.style.display = 'inline';
+    this.nickInput.focus();
 
     this.startButton = this.add.button(this.world.centerX, this.world.centerY+150,
      'startButton', this.registerInput, this, 1, 0, 0);
