@@ -28,10 +28,13 @@ SetNick.prototype = {
     this.nickText.anchor.setTo(0.5, 0.5);
 
     this.nickInput = document.querySelector('#nick-input');
+    var canvas = document.querySelector('canvas');
+
+    var marginLeft = parseInt(window.getComputedStyle(canvas)['margin-left'], 10);
     var style = window.getComputedStyle(this.nickInput);
     var width = parseInt(style.width, 10);
-    this.nickInput.style.top = this.world.centerY;
-    this.nickInput.style.left = (this.world.width/2 - width/2) + 'px';
+    this.nickInput.style.top = this.world.centerY+15;
+    this.nickInput.style.left = (marginLeft + this.scale.margin.x + this.world.width/2 - width/2) + 'px';
     this.nickInput.style.display = 'inline';
     this.nickInput.focus();
 
