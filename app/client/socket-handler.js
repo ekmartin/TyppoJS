@@ -10,11 +10,29 @@ var SocketHandler = function(socket, nickname) {
 
   this.game = null;
 
-  this.socket.emit('hello', nickname);
-  this.socket.on('helloDone', (function() {
+  if (this.socket.connected) {
+    this.socket.emit('hello', nickname);
+  }
+  else {
+    this.attachConnect(nickname);
+  }
+
+  this.socket.on('helloDone', function() {
     this.connected = true;
     this.nickname = nickname;
-  }).bind(this));
+  }.bind(this));
+
+  this.socket.on('disconnect', function(err) {
+    console.log('Disconnected:', err);
+    this.attachConnect(nickname);
+  }.bind(this));
+};
+
+SocketHandler.prototype.attachConnect = function(nickname) {
+  this.socket.on('connect', function() {
+    console.log('got connect again emitting hello');
+    this.socket.emit('hello', nickname);
+  }.bind(this));
 };
 
 SocketHandler.prototype.setNickname = function(nickname) {
@@ -27,10 +45,10 @@ SocketHandler.prototype.setNickname = function(nickname) {
 SocketHandler.prototype.findMatch = function(game) {
   this.game = game;
   this.socket.emit('findMatch');
-  this.socket.on('foundMatch', (function(data) {
+  this.socket.on('foundMatch', function(data) {
     this.attachGameListeners();
     this.game.startCountdown(data.players, data.wordList);
-  }).bind(this));
+  }.bind(this));
 };
 
 // Tells the server the player lost.
