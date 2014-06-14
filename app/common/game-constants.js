@@ -15,4 +15,4 @@ module.exports = {
     var rate = this.START_RATE - Math.pow(0.22*totalDelta, 2);
     return rate > this.MIN_RATE ? rate : this.MIN_RATE;
   }
-};;
+};

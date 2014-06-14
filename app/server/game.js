@@ -65,7 +65,12 @@ Game.prototype.fadeBlock = function(playerID, blockID) {
   if (this.isLive) {
     var player = this.findPlayer(playerID);
     var block = _.find(player.typpo.blocks, { id: blockID });
-    player.typpo.fadeBlock(block);
+    if (block !== undefined) {
+      player.typpo.fadeBlock(block);
+    }
+    else {
+      console.log('Someone is trying to fade a block that doesn\'t exist.');
+    }
   }
 };
 
