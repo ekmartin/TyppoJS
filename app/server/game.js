@@ -1,7 +1,7 @@
 'use strict';
 
 var gameConstants = require('../common/game-constants'),
-    Typpo         = require('../client/typpo'),
+    Typpo         = require('../common/typpo'),
     _             = require('lodash');
 
 var Game = function(match, wordList) {
@@ -33,6 +33,7 @@ var Game = function(match, wordList) {
   });
 
   var time = Date.now();
+  console.log('starting now!', time);
   _.forEach(this.players, function(player) {
     player.typpo.startGame(time);
   });
@@ -68,16 +69,27 @@ Game.prototype.fadeBlock = function(playerID, blockID) {
   }
 };
 
+Game.prototype.giveUpCurrentBlock = function(playerID) {
+  if (this.isLive) {
+    var player = this.findPlayer(playerID);
+    player.typpo.giveUpCurrentBlock();
+  }
+};
+
 Game.prototype.greyBlock = function(playerID) {
-  var sendPlayer = this.findPlayer(playerID);
-  var player = _.without(this.players, sendPlayer)[0];
-  player.typpo.greyCounter++;
+  if (this.isLive) {
+    var sendPlayer = this.findPlayer(playerID);
+    var player = _.without(this.players, sendPlayer)[0];
+    player.typpo.greyCounter++;
+  }
 };
 
 Game.prototype.update = function() {
-  _.map(this.players, function(player) {
-    player.typpo.tick();
-  });
+  if (this.isLive) {
+    _.map(this.players, function(player) {
+      player.typpo.tick();
+    });
+  }
 };
 
 module.exports = Game;

@@ -87,10 +87,8 @@ Block.prototype.drop = function(blocked) {
       for (var i = this.cells.length-1; i >= 0; i--) {
         this.cells[i].lock();
         this.cells[i].drop(blocked);
-        if (this.render) {
-          if (this.cells[i].sprite.game === null) {
-            this.cells.splice(i, 1);
-          }
+        if (this.cells[i].faded) {
+          this.cells.splice(i, 1);
         }
       }
       return true;
@@ -131,6 +129,9 @@ Block.prototype.up = function() {
 };
 
 Block.prototype.fadeNext = function() {
+  if (this.next.cell === null) {
+    console.log("se her", this);
+  }
   this.next.cell.fade();
   var index = this.cells.indexOf(this.next.cell);
   if (index === this.cells.length-1) {

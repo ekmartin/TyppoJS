@@ -6,6 +6,7 @@ module.exports = {
   BOTTOM_WALL: 1,
   START_RATE: 800,
   MIN_RATE: 400,
+  DEBUG: true,
   TILE_SIZE: {
     x: 32,
     y: 32

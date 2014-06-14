@@ -6,6 +6,27 @@ var Block         = require('./block'),
     gameConstants = require('../common/game-constants');
 
 
+var blockedToString = function(blocked) {
+  var returnString = "";
+
+  _.forEach(blocked, function(row) {
+    _.forEach(row, function(spot) {
+      switch(spot) {
+        case true:
+          returnString += '| # ';
+          break;
+        case false:
+          returnString += '|   ';
+          break;
+      }
+    });
+    returnString += '\n';
+  });
+
+  return returnString;
+};
+
+
 var Typpo = function (game, render, isPlayer, wordList, measures, playerID) {
   if (playerID) {
     this.playerID = playerID;
@@ -46,16 +67,19 @@ var Typpo = function (game, render, isPlayer, wordList, measures, playerID) {
   if (this.render) {
     this.walls  = this.game.add.group(this.game.world, 'walls', false);
 
-    for (var x = 0; x < this.origWidth; x++) {
-      for (var y = 0; y < this.origHeight; y++) {
-        if (x === 0 || x === (this.origWidth-1) || y === (this.origHeight-1)) {
-          var wall = this.walls.create(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'wallTile');
+    var blocked = this.getBlockedArray();
+
+    console.log('blocked1', blocked);
+    _.forEach(blocked, function(row, y) {
+      _.forEach(row, function(cell, x) {
+        if (cell) {
+          this.walls.create(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'wallTile');
         }
         else {
           this.game.add.sprite(x*gameConstants.TILE_SIZE.x + this.x, y*gameConstants.TILE_SIZE.y + this.y, 'bgTile');
         }
-      }
-    }
+      }, this);
+    }, this);
   }
 };
 
@@ -78,6 +102,10 @@ Typpo.prototype.dropTick = function() {
   }
   else {
     this.dropCounter++;
+  }
+
+  if (!this.render && gameConstants.DEBUG) {
+    console.log(blockedToString(this.getBlockedArray()));
   }
 };
 
@@ -103,6 +131,7 @@ Typpo.prototype.addBlock = function(wordObject) {
     throw new Error('WordObject ' + wordObject + ' does not have a word.');
   }
 };
+
 
 Typpo.prototype.getBlockedArray = function() {
   var blocked = [];
@@ -136,6 +165,7 @@ Typpo.prototype.getAliveBlocks = function() {
 
 Typpo.prototype.dropBlocks = function() {
   var blocked = this.getBlockedArray();
+
   _.forEach(this.blocks, function(block) {
     block.drop(blocked);
   });
@@ -185,6 +215,8 @@ Typpo.prototype.giveUpCurrentBlock = function() {
   if (this.currentBlock !== null) {
     this.currentBlock.giveUp();
     this.currentBlock = null;
+
+    this.emitEvent('giveUpCurrentBlock');
   }
 };
 

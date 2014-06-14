@@ -45,6 +45,7 @@ Match.prototype.disconnected = function(player) {
 };
 
 Match.prototype.matchDone = function() {
+  this.game.endGame();
   _.forEach(this.players, function(player) {
     player.leaveMatch();
   }, this);
@@ -60,6 +61,11 @@ Match.prototype.attachListeners = function() {
   _.forEach(this.players, function(player) {
     var socket = player.socket;
 
+    socket.on('giveUpCurrentBlock', function() {
+      this.game.giveUpCurrentBlock(player.uuid);
+      socket.broadcast.to(this.id).emit('giveUpCurrentBlock');
+    }.bind(this));
+
     socket.on('fadeBlock', function(blockID) {
       this.game.fadeBlock(player.uuid, blockID);
       socket.broadcast.to(this.id).emit('fadeBlock', blockID);
@@ -72,7 +78,6 @@ Match.prototype.attachListeners = function() {
 
     socket.on('gameDone', function() {
       var emitStatus = GameStatus.WON;
-      this.game.endGame();
       socket.broadcast.to(this.id).emit('gameDone', emitStatus);
       this.matchDone();
     }.bind(this));

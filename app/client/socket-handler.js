@@ -75,6 +75,9 @@ SocketHandler.prototype.attachGameListeners = function() {
     this.game.addGrey();
   }.bind(this));
 
+  this.socket.on('giveUpCurrentBlock', function() {
+    this.game.giveUpCurrentBlock();
+  }.bind(this));
 };
 
 module.exports = SocketHandler;

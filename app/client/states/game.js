@@ -2,7 +2,7 @@
 'use strict';
 
 var _             = require('lodash'),
-    Typpo         = require('../typpo'),
+    Typpo         = require('../../common/typpo'),
     GameStatus    = require('../../common/game-status'),
     gameConstants = require('../../common/game-constants');
 
@@ -139,6 +139,7 @@ Game.prototype.startCountdown = function(players, wordList) {
 };
 
 Game.prototype.startGame = function(startTime) {
+  console.log('starting now!', startTime);
   this.gameStatus = GameStatus.LIVE;
   this.player1.startGame(startTime);
   this.player2.startGame(startTime);
@@ -185,20 +186,28 @@ Game.prototype.keyHandler = function(e) {
 Game.prototype.fadeLagBlocks = function() {
   // If the blocks don't exist at this exact moment the user is probably lagging behind or similar,
   // which means the blocks most likely will appear later on.
-
-  _.forEach(this.lagBlocks, function(lagBlockID) {
-    var lagBlock = _.find(this.player2.blocks, { 'id': lagBlockID });
-
-    if (lagBlock !== undefined) {
-      this.player2.fadeBlock(lagBlock);
+  var pre = this.lagBlocks;
+  _.forEach(this.lagBlocks, function(lagBlockID, index) {
+    if (lagBlockID === 'giveUp' && this.player2.currentBlock !== null) {
+      this.player2.giveUpCurrentBlock();
       this.lagBlocks = _.without(this.lagBlocks, lagBlockID);
+    }
+    else {
+      var lagBlock = _.find(this.player2.blocks, { 'id': lagBlockID });
+      if (lagBlock !== undefined) {
+        this.player2.fadeBlock(lagBlock);
+        this.lagBlocks = _.without(this.lagBlocks, lagBlockID);
+      }
     }
   }, this);
 };
 
 Game.prototype.fadeBlock = function(blockID) {
   this.lagBlocks.push(blockID);
-  this.fadeLagBlocks();
+};
+
+Game.prototype.giveUpCurrentBlock = function() {
+  this.lagBlocks.push('giveUp');
 };
 
 Game.prototype.gameDone = function(gameWon, emit) {
