@@ -9,6 +9,8 @@ var Match = function(io, wordList, players) {
   this.id = uuid.v4();
   this.io = io;
 
+  this.active = true;
+
   this.wordList = wordList.getWords(1000);
   this.players = players;
 
@@ -27,8 +29,10 @@ var Match = function(io, wordList, players) {
   });
 
   setTimeout(function() {
-    this.io.to(this.id).emit('startMatch');
-    this.game = new Game(this, this.wordList);
+    if (this.active) {
+      this.io.to(this.id).emit('startMatch');
+      this.game = new Game(this, this.wordList);
+    }
   }.bind(this), 3000);
 
   this.attachListeners();
@@ -45,7 +49,8 @@ Match.prototype.disconnected = function(player) {
 };
 
 Match.prototype.matchDone = function() {
-  this.game.endGame();
+  this.active = false;
+  if (this.game) this.game.endGame();
   _.forEach(this.players, function(player) {
     player.leaveMatch();
   }, this);

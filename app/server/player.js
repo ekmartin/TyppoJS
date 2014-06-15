@@ -6,6 +6,7 @@ var Player = function Player(socket, nickname) {
   this.socket = socket;
   this.nickname = nickname;
   this.uuid = uuid.v4();
+  this.searching = false;
 
   this.match = null;
 };
