@@ -1,3 +1,14 @@
+BIN = node_modules/.bin
+BROWSERIFY = $(BIN)/browserify
+JS = $(shell find app/assets/js -name '*.js')
+
+DIST=public
+
+all: $(DIST)/game.js
+
+$(DIST)/game.js: $(JS) 
+	$(BROWSERIFY) app/client/main.js -o $(DIST)/game.js
+
 install:
 	npm install
 	bower install
@@ -5,4 +16,7 @@ install:
 server:
 	node_modules/.bin/supervisor index.js
 
-.PHONY: install server
+clean: 
+	rm $(DIST)/game.js
+	
+.PHONY: all install server clean
