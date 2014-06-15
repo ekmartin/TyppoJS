@@ -30,8 +30,8 @@ Game.prototype.create = function() {
   this.game.physics.startSystem(Phaser.Physics.Arcade);
   this.game.stage.backgroundColor = '#C8F7C5';
 
-  var canvas = document.querySelector('canvas');
-  canvas.style.border = '10px solid #1abc9c';
+  //var canvas = document.querySelector('canvas');
+  //canvas.style.border = '10px solid #1abc9c';
 
   this.countdownText = this.add.text(
     this.world.centerX,
