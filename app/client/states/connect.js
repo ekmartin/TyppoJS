@@ -29,7 +29,7 @@ Connect.prototype = {
     this.connectingText.anchor.setTo(0.5, 0.5);
 
 
-    var loader = this.game.add.sprite(
+    var loader = this.add.sprite(
       this.world.centerX,
       this.world.centerY,
       'lightLoadingAnimation'
@@ -39,7 +39,7 @@ Connect.prototype = {
     loader.animations.add('loop');
     loader.animations.play('loop', 15, true);
 
-    this.game.socketHandler = new SocketHandler(this.game.socket, this.game.nickname);
+    this.game.socketHandler = new SocketHandler(this.game.socket, this.game.nickname, this.game.state);
   },
 
   update: function() {

@@ -8,15 +8,12 @@ var _             = require('lodash'),
 
 
 var Game = function() {
-  this.findingText = null;
   this.countdownText = null;
   this.lastCount = null;
   this.lagBlocks = null;
 
   this.gameStatus = GameStatus.NOTLIVE;
-  this.startCountDown = false;
-  this.dots = 0;
-  this.nextDot = 0;
+  this.countdownStarted = false;
   this.successCounter = 0;
   this.successTreshold = 5;
   this.countdown = 3;
@@ -26,12 +23,10 @@ var Game = function() {
 };
 
 Game.prototype.create = function() {
-  this.game.socketHandler.findMatch(this);
-  this.game.physics.startSystem(Phaser.Physics.Arcade);
-  this.game.stage.backgroundColor = '#C8F7C5';
+  console.log('started game', Date.now()/1000);
+  this.game.socketHandler.sendReady();
 
-  //var canvas = document.querySelector('canvas');
-  //canvas.style.border = '10px solid #1abc9c';
+  this.stage.backgroundColor = '#C8F7C5';
 
   this.countdownText = this.add.text(
     this.world.centerX,
@@ -45,48 +40,12 @@ Game.prototype.create = function() {
   );
   this.countdownText.anchor.setTo(0.5, 0.5);
 
-  this.findingText = this.add.text(
-    this.world.centerX,
-    this.world.centerY - 150,
-    'Finding opponent',
-    {
-      font: '45pt hallo_sansblack',
-      fill: '#e67e22',
-      align: 'center'
-    }
-  );
-  this.findingText.x = this.world.width/2 - this.findingText.width/2;
-
-  this.hintText = this.add.text(
-    this.world.centerX,
-    this.world.centerY+250,
-    'Hint: Write the words \non the falling blocks!',
-    {
-      font: '30pt hallo_sansblack',
-      fill: '#e67e22',
-      align: 'center'
-    }
-  );
-  this.hintText.anchor.setTo(0.5, 0.5);
-
-  this.loader = this.game.add.sprite(
-    this.world.centerX,
-    this.world.centerY + 75,
-    'loadingAnimation'
-  );
-  this.loader.anchor.setTo(0.5, 0.5);
-
-  this.loader.animations.add('loop');
-  this.loader.animations.play('loop', 15, true);
-
-  this.lastCount = this.time.now;
-
   this.input.keyboard.addCallbacks(this, this.keyHandler);
 };
 
 
 Game.prototype.update = function() {
-  if (this.startCountDown) {
+  if (this.countdownStarted) {
     if (this.gameStatus === GameStatus.NOTLIVE) {
       this.countdownText.setText(String(this.countdown));
       this.countdownText.parent.bringToTop(this.countdownText);
@@ -110,28 +69,10 @@ Game.prototype.update = function() {
       }
     }
   }
-  else {
-    if (this.time.now > this.nextDot) {
-      if (this.dots === 3) {
-        this.dots = 0;
-      }
-      this.dots++;
-      var dotString = '';
-      for (var i = 0; i < this.dots; i++) {
-        dotString += '.';
-      }
-
-      this.findingText.text = 'Finding opponent' + dotString;
-      this.nextDot = this.time.now + 500;
-    }
-  }
 };
 
 Game.prototype.startCountdown = function(players, wordList) {
-  this.hintText.destroy();
-  this.findingText.destroy();
-  this.loader.destroy();
-
+  console.log('her ja', this);
   this.player1 = new Typpo(this, true, true, _.cloneDeep(wordList), {
     width: gameConstants.WIDTH,
     height: gameConstants.HEIGHT,
@@ -156,9 +97,11 @@ Game.prototype.startCountdown = function(players, wordList) {
       align: 'center'
     }
   );
+
   player1Text.anchor.setTo(0.5, 0.5);
 
   var player2 = _.without(players, this.game.socketHandler.nickname)[0];
+
   var player2Text = this.add.text(
     this.player2.x + this.player2.width/2,
     this.player2.y + this.player2.height + 25,
@@ -171,7 +114,7 @@ Game.prototype.startCountdown = function(players, wordList) {
   );
   player2Text.anchor.setTo(0.5, 0.5);
 
-  this.startCountDown = true;
+  this.countdownStarted = true;
 };
 
 Game.prototype.startGame = function(startTime) {
@@ -262,27 +205,8 @@ Game.prototype.gameDone = function(gameWon, emit) {
   this.game.state.start('Done');
 };
 
-Game.prototype.render = function() {
-  if (false) {
-    for (var i = 0; i < this.player1.blocks.length; i++) {
-      for (var j = 0; j < this.player1.blocks[i].cells.length; j++) {
-        this.game.debug.body(this.player1.blocks[i].cells[j].sprite);
-      }
-    }
-  }
-};
-
 Game.prototype.addGrey = function() {
   this.player1.greyCounter++;
-};
-
-Game.prototype.centerEntity = function(entity, centerX, centerY) {
-  if (centerX) {
-    entity.x = this.world.width/2 - entity.width/2;
-  }
-  if (centerY) {
-    entity.y = this.world.height/2 - entity.height/2;
-  }
 };
 
 exports.constructor = Game;

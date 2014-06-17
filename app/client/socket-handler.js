@@ -3,12 +3,13 @@
 
 var GameStatus = require('../common/game-status');
 
-var SocketHandler = function(socket, nickname) {
+var SocketHandler = function(socket, nickname, state) {
   this.socket = socket;
   this.nickname = null;
   this.connected = false;
 
-  this.game = null;
+  this.state = state;
+  this.game = state.states.Game;
 
   if (this.socket.connected) {
     this.socket.emit('hello', nickname);
@@ -42,12 +43,13 @@ SocketHandler.prototype.setNickname = function(nickname) {
   }).bind(this));
 };
 
-SocketHandler.prototype.findMatch = function(game) {
-  this.game = game;
+SocketHandler.prototype.findMatch = function() {
   this.socket.emit('findMatch');
   this.socket.on('foundMatch', function(data) {
+    this.players = data.players;
+    this.wordList = data.wordList;
     this.attachGameListeners();
-    this.game.startCountdown(data.players, data.wordList);
+    this.state.start('Game');
   }.bind(this));
 };
 
@@ -61,8 +63,19 @@ SocketHandler.prototype.sendGrey = function() {
   this.socket.emit('greyBlock');
 };
 
+SocketHandler.prototype.sendReady = function() {
+  console.log('sending ready', Date.now()/1000);
+  this.socket.emit('ready', Date.now()/1000);
+};
+
 SocketHandler.prototype.attachGameListeners = function() {
+  this.socket.on('startCountdown', function() {
+    console.log('got startcountdown', Date.now()/1000);
+    this.game.startCountdown(this.players, this.wordList);
+  }.bind(this));
+
   this.socket.on('startMatch', function() {
+    console.log('got startmatch', Date.now()/1000);
     this.game.startGame(Date.now());
   }.bind(this));
 

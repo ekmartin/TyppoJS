@@ -14,7 +14,7 @@ function GameStatusException(message) {
 Done.prototype = {
 
   create: function() {
-    this.game.stage.backgroundColor = '#C8F7C5';
+    this.stage.backgroundColor = '#C8F7C5';
 
     this.doneText = this.add.text(-999, 200, '', {
       font: '45pt hallo_sansblack',

@@ -22,7 +22,7 @@ Preloader.prototype = {
     );
     this.hintText.anchor.setTo(0.5, 0.5);
 
-    this.loader = this.game.add.sprite(
+    this.loader = this.add.sprite(
       this.world.centerX,
       this.world.centerY + 75,
       'lightLoadingAnimation'

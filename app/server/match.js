@@ -28,13 +28,6 @@ var Match = function(io, wordList, players) {
     wordList: this.wordList
   });
 
-  setTimeout(function() {
-    if (this.active) {
-      this.io.to(this.id).emit('startMatch');
-      this.game = new Game(this, this.wordList);
-    }
-  }.bind(this), 3000);
-
   this.attachListeners();
 };
 
@@ -65,6 +58,24 @@ Match.prototype.playerLost = function(playerID) {
 Match.prototype.attachListeners = function() {
   _.forEach(this.players, function(player) {
     var socket = player.socket;
+
+    socket.on('ready', function(test) {
+      player.ready = true;
+      console.log('got ready from one', player.nickname, test);
+      var allReady = !_.some(this.players, function(player) {
+        return player.ready !== true;
+      });
+      if (allReady) {
+        this.io.to(this.id).emit('startCountdown');
+        console.log('emitting startmatch');
+        setTimeout(function() {
+          if (this.active) {
+            this.io.to(this.id).emit('startMatch');
+            this.game = new Game(this, this.wordList);
+          }
+        }.bind(this), 3000);
+      }
+    }.bind(this));
 
     socket.on('giveUpCurrentBlock', function() {
       this.game.giveUpCurrentBlock(player.uuid);

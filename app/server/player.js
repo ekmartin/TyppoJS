@@ -13,6 +13,7 @@ var Player = function Player(socket, nickname) {
 
 Player.prototype.setMatch = function(match) {
   this.match = match;
+  this.ready = false;
 };
 
 Player.prototype.leaveMatch = function() {

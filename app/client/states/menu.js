@@ -6,7 +6,7 @@ module.exports = Menu;
 
 Menu.prototype = {
   create: function() {
-    this.game.stage.backgroundColor = '#1abc9c';
+    this.stage.backgroundColor = '#1abc9c';
 
     this.logo = this.add.image(this.world.centerX, 150, 'logo');
     this.logo.anchor.setTo(0.5, 0.5);
@@ -18,7 +18,7 @@ Menu.prototype = {
   },
 
   findGame: function() {
-    this.game.state.start('Game');
+    this.game.state.start('PublicMatch');
   },
 
 };
