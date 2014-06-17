@@ -189,7 +189,7 @@ Typpo.prototype.tick = function() {
 
       this.dropRate = gameConstants.getDropRate(totalDelta/1000);
 
-      var n = ~~(delta/this.dropRate); // Integer division (floored)
+      var n = Math.floor(delta/this.dropRate);
 
       for (var i = 0; i < n; i++) {
         this.dropTick();
