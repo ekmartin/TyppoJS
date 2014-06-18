@@ -8,9 +8,6 @@ module.exports = SetNick;
 
 SetNick.prototype = {
   create: function() {
-
-    console.log('se her', this.game.state.states);
-
     this.game.stage.backgroundColor = '#1abc9c';
     this.fadeOutWarning = 0;
 
@@ -38,34 +35,28 @@ SetNick.prototype = {
     this.startButton = this.add.button(this.world.centerX, this.world.centerY+150,
      'startButton', this.registerInput, this, 1, 0, 0);
     this.startButton.anchor.setTo(0.5, 0.5);
-
-    window.onkeyup = function(e) {
-      if (e.keyCode === 13) {
-        this.registerInput();
-      }
-    }.bind(this);
-  },
-
-  registerInput: function() {
-    var nick = this.nickInput.value;
-    if (nick.length && nick.length < 15) {
-      this.game.nickname = nick;
-      this.nickInput.style.display = 'none';
-      this.game.state.start('Connect');
-    }
-    else if (!nick.length) {
-      this.warningText.text = 'Please enter a nick!';
-      this.warningText.alpha = 1;
-      this.fadeOutWarning = this.time.now + 2000;
-    }
-    else {
-      this.warningText.text = 'Ouch, maybe try a shorter nick?';
-      this.warningText.alpha = 1;
-      this.fadeOutWarning = this.time.now + 2000;
-    }
   },
 
   update: function() {
+    if (this.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+      var nick = this.nickInput.value;
+      if (nick.length && nick.length < 15) {
+        this.game.nickname = nick;
+        this.nickInput.style.display = 'none';
+        this.game.state.start('Connect');
+      }
+      else if (!nick.length) {
+        this.warningText.text = 'Please enter a nick!';
+        this.warningText.alpha = 1;
+        this.fadeOutWarning = this.time.now + 2000;
+      }
+      else {
+        this.warningText.text = 'Ouch, maybe try a shorter nick?';
+        this.warningText.alpha = 1;
+        this.fadeOutWarning = this.time.now + 2000;
+      }
+    }
+
     if (this.time.now > this.fadeOutWarning && this.fadeOutWarning !== 0) {
       this.add.tween(this.warningText).to({ alpha: 0 }, 400, Phaser.Easing.Cubic.Out, true);
       this.fadeOutWarning = 0;
