@@ -58,6 +58,7 @@ Preloader.prototype = {
   },
 
   create: function() {
+    console.log('started preloader state');
     this.game.state.start('SetNick');
   }
 };

@@ -24,6 +24,7 @@ Boot.prototype = {
   },
 
   create: function() {
+    console.log('started boot state');
     this.stage.disableVisibilityChange = true;
 
     this.game.state.start('Preloader');

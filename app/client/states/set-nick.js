@@ -8,6 +8,7 @@ module.exports = SetNick;
 
 SetNick.prototype = {
   create: function() {
+    console.log('started nick state');
     this.game.stage.backgroundColor = '#1abc9c';
     this.fadeOutWarning = 0;
 

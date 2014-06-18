@@ -48,6 +48,7 @@ SocketHandler.prototype.findMatch = function() {
   this.socket.on('foundMatch', function(data) {
     this.players = data.players;
     this.wordList = data.wordList;
+    console.log('the list', this.wordList);
     this.attachGameListeners();
     this.state.start('Game');
   }.bind(this));
@@ -71,7 +72,7 @@ SocketHandler.prototype.sendReady = function() {
 SocketHandler.prototype.attachGameListeners = function() {
   this.socket.on('startCountdown', function() {
     console.log('got startcountdown', Date.now()/1000);
-    this.game.startCountdown(this.players, this.wordList);
+    this.game.startCountdown();
   }.bind(this));
 
   this.socket.on('startMatch', function() {
