@@ -10,6 +10,7 @@ var SocketHandler = function(socket, nickname, state) {
 
   this.state = state;
   this.game = state.states.Game;
+  this.privateMatch = state.states.PrivateMatch;
 
   if (this.socket.connected) {
     this.socket.emit('hello', nickname);
@@ -43,8 +44,25 @@ SocketHandler.prototype.setNickname = function(nickname) {
   }).bind(this));
 };
 
+SocketHandler.prototype.startPrivateMatch = function() {
+  this.socket.emit('startPrivateMatch');
+  this.socket.on('matchID', this.privateMatch.setLink);
+  this.attachFoundMatch();
+};
+
 SocketHandler.prototype.findMatch = function() {
   this.socket.emit('findMatch');
+  this.attachFoundMatch();
+};
+
+SocketHandler.prototype.attachIllegalPrivateMatch = function() {
+  this.socket.on('illegalPrivateMatch', function() {
+    window.location.hash = '';
+    this.state.start('Menu');
+  });
+};
+
+SocketHandler.prototype.attachFoundMatch = function() {
   this.socket.on('foundMatch', function(data) {
     this.players = data.players;
     this.wordList = data.wordList;

@@ -21,6 +21,10 @@ Menu.prototype = {
     this.game.state.start('PublicMatch');
   },
 
+  privateMatch: function() {
+    console.log('yep');
+    this.game.state.start('PrivateMatch');
+  }
 };
 
 })();

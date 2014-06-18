@@ -16,6 +16,7 @@ game.state.add('SetNick', require('./states/set-nick'));
 game.state.add('Menu', require('./states/menu'));
 game.state.add('Connect', require('./states/connect'));
 game.state.add('PublicMatch', require('./states/public-match'));
+game.state.add('PrivateMatch', require('./states/private-match'));
 game.state.add('Game', require('./states/game').constructor);
 game.state.add('Done', require('./states/done'));
 

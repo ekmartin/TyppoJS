@@ -26,7 +26,7 @@ PublicMatch.prototype.create = function() {
       align: 'center'
     }
   );
-  this.findingText.x = this.world.width/2 - this.findingText.width/2;
+  this.findingText.anchor.setTo(0.5, 0.5);
 
   this.hintText = this.add.text(
     this.world.centerX,

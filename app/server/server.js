@@ -1,11 +1,12 @@
 'use strict';
 
-var Player = require('./player'),
-    Match  = require('./match'),
-    _      = require('lodash');
+var Player        = require('./player'),
+    Match         = require('./match'),
+    _             = require('lodash'),
+    playersSearching = [],
+    privateMatches = [];
 
 function startServer(io, wordList) {
-  var playersSearching = [];
   io.on('connection', function(client) {
     client.emit('connected');
 
@@ -20,6 +21,31 @@ function startServer(io, wordList) {
       client.player.nickname = nickname;
       client.emit('setNickDone');
     });
+
+    client.on('startPrivateMatch', function() {
+      var matchID = Math.random().toString(36).slice(2, 10);
+      while (_.contains(privateMatches, matchID)) {
+        matchID = Math.random().toString(36).slice(2, 10);
+      }
+
+      client.emit('matchID', matchID);
+
+      privateMatches.push({
+        matchID: matchID,
+        players: [client.player]
+      });
+    });
+
+    client.on('joinPrivateMatch', function(matchID) {
+      var matchObj = _.find(privateMatches, { matchID : matchID });
+      if (matchObj !== undefined) {
+        matchObj.players.push(client.player);
+        var match = new Match(io, wordList, matchObj.players);
+      }
+      else {
+        client.emit('illegalMatchID');
+      }
+    })
 
     client.on('findMatch', function() {
       // Could probably emit something back so the player knows something went wrong (TODO).
