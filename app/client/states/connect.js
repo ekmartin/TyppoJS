@@ -40,11 +40,17 @@ Connect.prototype = {
     loader.animations.play('loop', 15, true);
 
     this.game.socketHandler = new SocketHandler(this.game.socket, this.game.nickname, this.game.state);
+
+    if (!!window.location.hash) {
+      this.game.socketHandler.joinPrivateMatch();
+    }
   },
 
   update: function() {
     if (this.game.socketHandler.connected && this.game.socketHandler.nickname !== null) {
-      this.game.state.start('Menu');
+      if (!window.location.hash) {
+        this.game.state.start('Menu');
+      }
     }
   }
 };

@@ -46,7 +46,16 @@ SocketHandler.prototype.setNickname = function(nickname) {
 
 SocketHandler.prototype.startPrivateMatch = function() {
   this.socket.emit('startPrivateMatch');
-  this.socket.on('matchID', this.privateMatch.setLink);
+  this.socket.on('matchID', function(matchID) {
+    this.privateMatch.setLink(matchID);
+  }.bind(this));
+  this.attachFoundMatch();
+};
+
+SocketHandler.prototype.joinPrivateMatch = function() {
+  var matchID = window.location.hash.slice(1);
+  this.socket.emit('joinPrivateMatch', matchID);
+  this.attachIllegalMatchID();
   this.attachFoundMatch();
 };
 
@@ -55,11 +64,11 @@ SocketHandler.prototype.findMatch = function() {
   this.attachFoundMatch();
 };
 
-SocketHandler.prototype.attachIllegalPrivateMatch = function() {
-  this.socket.on('illegalPrivateMatch', function() {
+SocketHandler.prototype.attachIllegalMatchID= function() {
+  this.socket.on('illegalMatchID', function() {
     window.location.hash = '';
     this.state.start('Menu');
-  });
+  }.bind(this));
 };
 
 SocketHandler.prototype.attachFoundMatch = function() {

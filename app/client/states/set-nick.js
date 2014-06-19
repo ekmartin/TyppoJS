@@ -42,7 +42,6 @@ SetNick.prototype = {
     var nick = this.nickInput.value;
     if (nick.length && nick.length < 15) {
       this.game.nickname = nick;
-      this.nickInput.style.display = 'none';
       this.game.state.start('Connect');
     }
     else if (!nick.length) {
@@ -66,6 +65,10 @@ SetNick.prototype = {
       this.add.tween(this.warningText).to({ alpha: 0 }, 400, Phaser.Easing.Cubic.Out, true);
       this.fadeOutWarning = 0;
     }
+  },
+
+  shutdown: function() {
+    this.nickInput.style.display = 'none';
   }
 
 };

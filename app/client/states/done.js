@@ -14,6 +14,8 @@ function GameStatusException(message) {
 Done.prototype = {
 
   create: function() {
+    window.location.hash = '';
+
     this.stage.backgroundColor = '#C8F7C5';
 
     this.doneText = this.add.text(-999, 200, '', {

@@ -30,6 +30,8 @@ function startServer(io, wordList) {
 
       client.emit('matchID', matchID);
 
+      console.log((client.player.nickname + ' started privatematch ' + matchID).green);
+
       privateMatches.push({
         matchID: matchID,
         players: [client.player]
@@ -37,10 +39,12 @@ function startServer(io, wordList) {
     });
 
     client.on('joinPrivateMatch', function(matchID) {
+      console.log('got a join privatematch');
       var matchObj = _.find(privateMatches, { matchID : matchID });
       if (matchObj !== undefined) {
         matchObj.players.push(client.player);
         var match = new Match(io, wordList, matchObj.players);
+        privateMatches = _.without(privateMatches, matchObj);
       }
       else {
         client.emit('illegalMatchID');

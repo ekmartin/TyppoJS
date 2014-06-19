@@ -12,12 +12,11 @@ var PublicMatch = function() {
 };
 
 PublicMatch.prototype.create = function() {
-  console.log('got here');
   this.game.socketHandler.findMatch();
   this.game.stage.backgroundColor = '#C8F7C5';
 
   this.findingText = this.add.text(
-    this.world.centerX,
+    -999,
     this.world.centerY - 150,
     'Finding opponent',
     {
@@ -26,7 +25,8 @@ PublicMatch.prototype.create = function() {
       align: 'center'
     }
   );
-  this.findingText.anchor.setTo(0.5, 0.5);
+  // Can't anchor it as it would move around when the dots are added to its string.
+  this.findingText.x = this.world.width/2 - this.findingText.width/2;
 
   this.hintText = this.add.text(
     this.world.centerX,

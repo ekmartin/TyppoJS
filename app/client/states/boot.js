@@ -40,6 +40,17 @@ Boot.prototype = {
     nickInput.style.height = this.scale.height/8;
     nickInput.style.top = this.scale.height/2+15;
     nickInput.style.left = (marginLeft + this.scale.width/4) + 'px';
+    // Fit the font inside the input, should maybe fix the magic number:
+    nickInput.style.fontSize = this.scale.width/2/14 + 'px';
+    var matchInput = document.querySelector('#match-input');
+
+    var marginLeft = parseInt(window.getComputedStyle(canvas)['margin-left'], 10);
+    matchInput.style.width = this.scale.width/2;
+    matchInput.style.height = this.scale.height/8;
+    matchInput.style.top = this.scale.height/2+15;
+    // Fix the text inside the input, should maybe fix the magic number:
+    matchInput.style.fontSize = this.scale.width/2/15 + 'px';
+    matchInput.style.left = (marginLeft + this.scale.width/4) + 'px';
   }
 };
 })();
