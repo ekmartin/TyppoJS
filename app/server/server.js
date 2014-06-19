@@ -32,6 +32,8 @@ function startServer(io, wordList) {
 
       console.log((client.player.nickname + ' started privatematch ' + matchID).green);
 
+      client.player.waitingForPrivateMatch = true;
+
       privateMatches.push({
         matchID: matchID,
         players: [client.player]
@@ -77,9 +79,17 @@ function startServer(io, wordList) {
           console.log("Player disconnected while in a in a match.".red);
           player.match.disconnected(player);
         }
+        else if (player.waitingForPrivateMatch) {
+          console.log("Player disconnected while waiting in a private match.".blue);
+          // Remove the private match
+          privateMatches = _.filter(privateMatches, function(match) {
+            return match.players[0] !== player;
+          });
+        }
         else if (player.searching) {
           console.log("Player disconnected while searching.".blue);
-          playersSearching.splice(playersSearching.indexOf(player), 1);
+          // Remove the player from the search array
+          playersSearching = _.without(playersSearching, player);
         }
         else {
           console.log("Player disconnected without searching.".green);
