@@ -52,6 +52,12 @@ SocketHandler.prototype.startPrivateMatch = function() {
   this.attachFoundMatch();
 };
 
+SocketHandler.prototype.stopPrivateMatch = function() {
+  this.socket.emit('stopPrivateMatch');
+  this.socket.removeListener('matchID');
+  this.socket.removeListener('foundmatch');
+};
+
 SocketHandler.prototype.joinPrivateMatch = function() {
   var matchID = window.location.hash.slice(1);
   this.socket.emit('joinPrivateMatch', matchID);

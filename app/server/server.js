@@ -40,6 +40,16 @@ function startServer(io, wordList) {
       });
     });
 
+    client.on('stopPrivateMatch', function() {
+      console.log('before', privateMatches.length);
+      var match = _.find(privateMatches, function(match) {
+        return match.players[0] === client.player;
+      });
+
+      privateMatches = _.without(privateMatches, match);
+      console.log('after', privateMatches.length);
+    });
+
     client.on('joinPrivateMatch', function(matchID) {
       console.log('got a join privatematch');
       var matchObj = _.find(privateMatches, { matchID : matchID });

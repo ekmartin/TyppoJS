@@ -43,6 +43,10 @@ PrivateMatch.prototype.create = function() {
   this.matchInput = document.querySelector('#match-input');
   this.matchInput.style.display = 'inline';
   this.matchInput.focus();
+
+  this.smallMenuButton = this.add.button(this.world.centerX, this.world.centerY+170,
+    'smallMenuButton', this.startMenu, this, 1, 0, 0);
+  this.smallMenuButton.anchor.setTo(0.5, 0.5);
 };
 
 PrivateMatch.prototype.setLink = function(matchID) {
@@ -68,6 +72,12 @@ PrivateMatch.prototype.update = function() {
 
 PrivateMatch.prototype.shutdown = function() {
   this.matchInput.style.display = 'none';
+};
+
+PrivateMatch.prototype.startMenu = function() {
+  this.game.socketHandler.stopPrivateMatch();
+  window.location.hash = '';
+  this.game.state.start('Menu');
 };
 
 module.exports = PrivateMatch;
