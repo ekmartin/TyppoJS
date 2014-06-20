@@ -64,6 +64,11 @@ SocketHandler.prototype.findMatch = function() {
   this.attachFoundMatch();
 };
 
+SocketHandler.prototype.stopSearching = function() {
+  this.socket.emit('stopSearching');
+  this.socket.removeListener('foundMatch');
+};
+
 SocketHandler.prototype.attachIllegalMatchID= function() {
   this.socket.on('illegalMatchID', function() {
     window.location.hash = '';

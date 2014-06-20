@@ -72,6 +72,13 @@ function startServer(io, wordList) {
       }
     });
 
+    client.on('stopSearching', function() {
+      console.log('before', playersSearching.length);
+      playersSearching = _.without(playersSearching, client.player);
+      client.player.leaveMatch();
+      console.log('after', playersSearching.length);
+    });
+
     client.on('disconnect', function() {
       var player = client.player;
       if (!!player)  {

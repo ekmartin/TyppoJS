@@ -37,6 +37,7 @@ Preloader.prototype = {
     this.load.spritesheet('findGame', '/assets/img/findGame.png', 594, 112);
     this.load.spritesheet('privateMatch', '/assets/img/privateMatch.png', 594, 112);
     this.load.spritesheet('menuButton', '/assets/img/menuButton.png', 297, 112);
+    this.load.spritesheet('smallMenuButton', '/assets/img/smallMenuButton.png', 150, 57);
 
     // Game:
     this.load.image('bgTile', '/assets/img/BGTile.png');

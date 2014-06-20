@@ -15,10 +15,12 @@ var Player = function Player(socket, nickname) {
 Player.prototype.setMatch = function(match) {
   this.match = match;
   this.ready = false;
+  this.searching = false;
 };
 
 Player.prototype.leaveMatch = function() {
   this.match = null;
+  this.searching = false;
 };
 
 module.exports = Player;

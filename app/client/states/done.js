@@ -39,11 +39,11 @@ Done.prototype = {
         throw new GameStatusException('Invalid GameStatus (not WON/LOST).');
     }
 
-    var buttonWidth = 297;
-    this.menuButton = this.add.button(this.world.width/2-buttonWidth/2, 350, 'menuButton', this.menuButton, this, 1, 0, 0);
+    this.menuButton = this.add.button(this.world.centerX, 350, 'menuButton', this.startMenu, this, 1, 0, 0);
+    this.menuButton.anchor.setTo(0.5, 0.5);
   },
 
-  menuButton: function() {
+  startMenu: function() {
     this.game.state.start('Menu');
   }
 };

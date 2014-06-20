@@ -49,6 +49,10 @@ PublicMatch.prototype.create = function() {
 
   this.loader.animations.add('loop');
   this.loader.animations.play('loop', 15, true);
+
+  this.smallMenuButton = this.add.button(this.world.centerX, this.world.centerY+280,
+    'smallMenuButton', this.startMenu, this, 1, 0, 0);
+  this.smallMenuButton.anchor.setTo(0.5, 0.5);
 };
 
 
@@ -66,6 +70,11 @@ PublicMatch.prototype.update = function() {
     this.findingText.text = 'Finding opponent' + dotString;
     this.nextDot = this.time.now + 500;
   }
+};
+
+PublicMatch.prototype.startMenu = function() {
+  this.game.socketHandler.stopSearching();
+  this.game.state.start('Menu');
 };
 
 module.exports = PublicMatch;
