@@ -17,7 +17,7 @@ PublicMatch.prototype.create = function() {
 
   this.findingText = this.add.text(
     -999,
-    this.world.centerY - 150,
+    this.world.centerY - 170,
     'Finding opponent',
     {
       font: '45pt hallo_sansblack',
@@ -30,11 +30,11 @@ PublicMatch.prototype.create = function() {
 
   this.hintText = this.add.text(
     this.world.centerX,
-    this.world.centerY+250,
+    this.world.centerY+150,
     'Hint: Write the words \non the falling blocks!',
     {
       font: '30pt hallo_sansblack',
-      fill: '#e67e22',
+      fill: '#f1c40f',
       align: 'center'
     }
   );
@@ -42,7 +42,7 @@ PublicMatch.prototype.create = function() {
 
   this.loader = this.add.sprite(
     this.world.centerX,
-    this.world.centerY + 75,
+    this.world.centerY,
     'loadingAnimation'
   );
   this.loader.anchor.setTo(0.5, 0.5);

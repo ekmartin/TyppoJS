@@ -1,6 +1,6 @@
 BIN = node_modules/.bin
 BROWSERIFY = $(BIN)/browserify
-JS = $(shell find app/client -name '*.js')
+JS = $(shell find app/client app/client/states app/common -name '*.js')
 
 DIST=public
 
