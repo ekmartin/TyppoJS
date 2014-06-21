@@ -51,7 +51,8 @@ PublicMatch.prototype.create = function() {
   this.loader.animations.play('loop', 15, true);
 
   this.smallMenuButton = this.add.button(this.world.centerX, this.world.centerY+280,
-    'smallMenuButton', this.startMenu, this, 1, 0, 0);
+    'menuButton', this.startMenu, this, 1, 0, 0);
+  this.smallMenuButton.scale.setTo(0.6, 0.6);
   this.smallMenuButton.anchor.setTo(0.5, 0.5);
 };
 
