@@ -1,25 +1,32 @@
 {
-  "name": "Typpo",
-  "version": "0.0.0",
-  "description": "A multiplayer typing game.",
+  "name": "TyppoJS",
+  "version": "0.0.1",
+  "description": "A work in progress multiplayer typing game.",
   "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "browserify": "^5.12.1",
+    "colors": "^0.6.2",
+    "express": "^4.9.5",
+    "jade": "^1.7.0",
+    "node-uuid": "^1.4.1",
+    "lodash": "^2.4.1",
+    "socket.io": "^1.1.0",
+    "supervisor": "^0.6.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "ekmartin",
-  "dependencies": {
-    "browserify": "*",
-    "colors": "*",
-    "express": "*",
-    "jade": "*",
-    "lodash": "*",
-    "nib": "*",
-    "node-uuid": "*",
-    "socket.io": "*",
-    "stylus": "*"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ekmartin/TyppoJS.git"
   },
-  "devDependencies": {
-    "supervisor": "*",
-    "browserify-middleware": "*"
-  }
+  "author": "Martin Ek",
+  "bugs": {
+    "url": "https://github.com/ekmartin/TyppoJS/issues"
+  },
+  "homepage": "https://github.com/ekmartin/TyppoJS"
 }
