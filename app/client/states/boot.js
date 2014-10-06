@@ -1,7 +1,8 @@
 (function(){
 'use strict';
 
-var Boot = function() {};
+var _    = require('lodash'),
+    Boot = function() {};
 
 module.exports = Boot;
 
@@ -32,25 +33,51 @@ Boot.prototype = {
 
   gameResized: function(e) {
 
+    /*
+    Calculated from the start dimensions:
+    Canvas: 1056x700 (210px above)
+    Input: 550x85
+     */
+    var percentages = {
+        width: 0.5, // 550px/1056px
+        height: 0.12, // 85px/1056px
+        top: 0.48, // (550px-210px)/700px
+        font: 0.03
+    };
+
+    var start = {
+        margin: {
+            top: 208
+        },
+        canvas: {
+            width: 1056,
+            height: 700
+        },
+        input: {
+            width: 550,
+            height: 85,
+            top: 342
+        }
+    };
+
+    var widthFactor = start.input.widht/start.canvas.width;
+    var heightFactor = start.input.height/start.canvas.width;
+    var topFactor = start.input.top/start.canvas.height + 210;
+
     var nickInput = document.querySelector('#nick-input');
+    var matchInput = document.querySelector('#match-input');
     var canvas = document.querySelector('canvas');
 
-    var marginLeft = parseInt(window.getComputedStyle(canvas)['margin-left'], 10);
-    nickInput.style.width = this.scale.width/2;
-    nickInput.style.height = this.scale.height/8;
-    nickInput.style.top = this.scale.height/2+15;
-    nickInput.style.left = (marginLeft + this.scale.width/4) + 'px';
-    // Fit the font inside the input, should maybe fix the magic number:
-    nickInput.style.fontSize = this.scale.width/2/14 + 'px';
-    var matchInput = document.querySelector('#match-input');
+    var that = this;
+    var newStyle = {
+        width: that.scale.width * percentages.width,
+        height: that.scale.height * percentages.height,
+        top: that.scale.height * percentages.top + 210,
+        fontSize: that.scale.width * 0.04 + 'px'
+    };
 
-    var marginLeft = parseInt(window.getComputedStyle(canvas)['margin-left'], 10);
-    matchInput.style.width = this.scale.width/2;
-    matchInput.style.height = this.scale.height/8;
-    matchInput.style.top = this.scale.height/2+15;
-    // Fix the text inside the input, should maybe fix the magic number:
-    matchInput.style.fontSize = this.scale.width/2/15 + 'px';
-    matchInput.style.left = (marginLeft + this.scale.width/4) + 'px';
+    nickInput.style = _.extend(nickInput.style, newStyle);
+    matchInput.style = _.extend(matchInput.style, newStyle);
   }
 };
 })();
