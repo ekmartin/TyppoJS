@@ -171,7 +171,10 @@ Game.prototype.startGame = function(startTime) {
 
 Game.prototype.keyHandler = function(e) {
   if (this.gameStatus === GameStatus.LIVE) {
-    var letter = String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
+    var letter = e.key ?
+      e.key :
+      String.fromCharCode(parseInt(e.keyIdentifier.slice(1), 16)).toLowerCase();
+
     if (/[a-z0-9]/.test(letter)) {
       // TODO: This will only work for English words, if the game should be translated this needs to be fixed
 
