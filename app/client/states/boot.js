@@ -68,16 +68,15 @@ Boot.prototype = {
     var matchInput = document.querySelector('#match-input');
     var canvas = document.querySelector('canvas');
 
-    var that = this;
-    var newStyle = {
-        width: that.scale.width * percentages.width,
-        height: that.scale.height * percentages.height,
-        top: that.scale.height * percentages.top + 210,
-        fontSize: that.scale.width * 0.04 + 'px'
-    };
+    nickInput.style.width = this.scale.width * percentages.width;
+    nickInput.style.height = this.scale.height * percentages.height;
+    nickInput.style.top = this.scale.height * percentages.top + 210;
+    nickInput.style.fontSize = this.scale.width * 0.04 + 'px';
 
-    nickInput.style = _.extend(nickInput.style, newStyle);
-    matchInput.style = _.extend(matchInput.style, newStyle);
+    matchInput.style.width = this.scale.width * percentages.width;
+    matchInput.style.height = this.scale.height * percentages.height;
+    matchInput.style.top = this.scale.height * percentages.top + 210;
+    matchInput.style.fontSize = this.scale.width * 0.04 + 'px';
   }
 };
 })();
